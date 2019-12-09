@@ -111,53 +111,53 @@ CREATE TABLE StockBalance
 )
 
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(1, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(1, 300, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(2, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(2, 300, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(3, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(3, 0, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(4, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(4, 345, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(4, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(4, 33, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(5, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(5, 0, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(6, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(6, 233, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(7, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(7, 0, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(8, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(8, 133, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(9, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(9, 43, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(10, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(10, 3, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(11, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(11, 567, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(12, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(12, 567, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(13, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(13, 24, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(14, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(14, 34, 3, 297)
 INSERT INTO StockBalance
-    (ProductId, InStock, Reserved)
-VALUES(15, 300, 3)
+    (ProductId, InStock, Reserved, Available)
+VALUES(15, 24, 3, 297)
 GO
 
 /* Products_Cart */
