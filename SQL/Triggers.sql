@@ -1,8 +1,5 @@
 /* Popularity +5 */
-DROP TRIGGER Popularity_5 
-GO
-
-CREATE TRIGGER Popularity_5
+CREATE OR ALTER TRIGGER Popularity_5
 ON Products_Cart
 AFTER INSERT
 AS
@@ -13,11 +10,9 @@ BEGIN
 END
 GO
 
-/* Popularity +10 */
-DROP TRIGGER Popularity_10 
-GO
 
-CREATE TRIGGER Popularity_10
+/* Popularity +10 */
+CREATE OR ALTER TRIGGER Popularity_10
 ON Orders
 AFTER INSERT
 AS
@@ -27,6 +22,7 @@ BEGIN
     WHERE Products.Id = inserted.Id
 END
 GO
+
 
 /* UpdateSumCart */
 CREATE OR ALTER TRIGGER UpdateSumCart
@@ -39,6 +35,7 @@ BEGIN
     WHERE Cart.Id = inserted.Id
 END
 GO
+
 
 /* UpdateSumOrder */
 CREATE OR ALTER TRIGGER UpdateSumOrder

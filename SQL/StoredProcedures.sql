@@ -10,6 +10,7 @@ GO
 EXEC GetAllProducts
 GO
 
+
 /* GetProductDetails & Popularity +1 */
 CREATE OR ALTER PROCEDURE GetProductDetails
     (@ProcuctId int)
@@ -43,6 +44,7 @@ GO
 EXEC ListProductsByCategory 0
 GO
 
+
 /* CreateCart & Return CartId */
 CREATE OR ALTER PROCEDURE CreateCart
     @ProductId int,
@@ -68,6 +70,7 @@ GO
 
 select * from cart go
 
+
 /* InsertIntoCart */
 CREATE OR ALTER PROCEDURE InsertIntoCart
     (@ProductId int,
@@ -84,6 +87,7 @@ END
 EXEC InsertIntoCart 3, 4, 220
 GO
 
+
 /* UpdateCart */
 CREATE OR ALTER PROCEDURE UpdateCart
     (@CartId int,
@@ -99,11 +103,10 @@ BEGIN
 END
     GO
 
-UpdateCart 3, 3, 4, 220
+UpdateCart 10, 1, 4, 220
 	GO
 
-DELETE   FROM cart
-GO
+
 /* GetCart */
 CREATE OR ALTER PROCEDURE GetCart
     (@CartId int)
@@ -115,4 +118,6 @@ BEGIN
     WHERE c.Id = @CartId;
 END
     GO
-EXEC GetCart 1
+EXEC GetCart 10
+
+select * from Cart
