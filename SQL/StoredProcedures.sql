@@ -47,64 +47,93 @@ GO
 
 /* CreateCart & Return CartId */
 CREATE OR ALTER PROCEDURE CreateCart
-    @ProductId int,
-    @Amount int,
-    @Price int,
-    @CartId int output
+    @CustomerId int
 AS
 BEGIN
-    INSERT INTO Cart
-        (ProductId, Amount, Price)
-    VALUES
-        (@ProductId, @Amount, @Price)
-
-    SET @CartId = SCOPE_IDENTITY()
-    RETURN @CartId
+    INSERT INTO Cart (CustomerId)
+    VALUES (@CustomerId)
+    RETURN SCOPE_IDENTITY()
 END
     GO
 
+
 DECLARE @CartIdOut int;
-EXEC @CartIdOut = CreateCart 1, 1, 1, 1
+EXEC @CartIdOut = CreateCart 6
 SELECT @CartIdOut AS CartId
 GO
 
-select * from cart go
+SELECT *
+FROM cart
+GO
 
 
 /* InsertIntoCart */
+-- CREATE OR ALTER PROCEDURE InsertIntoCart
+--     (@CartId int,
+--     @ProductId int,
+--     @Amount int,
+--     @Price int)
+-- AS
+-- BEGIN
+--     UPDATE Cart
+--   SET Amount += @Amount, Price = @Price
+--     WHERE Cart.Id = @CartId AND Cart.ProductId = @ProductId
+-- END
+--     GO
+
 CREATE OR ALTER PROCEDURE InsertIntoCart
-    (@ProductId int,
-    @Amount int,
-    @Price int)
+    (@CartId int,
+    @ProductId int,
+    @Amount int)
 AS
 BEGIN
-    INSERT INTO Cart
-        (ProductId, Amount, Price)
+    /* existing produkt */
+    IF EXISTS
+    (SELECT ProductId
+    FROM Products_Cart pc
+    WHERE pc.Id = @CartId AND pc.ProductId = @ProductId)
+    
+    UPDATE Products_Cart
+    SET Products_Cart.Amount += @Amount
+    WHERE Products_Cart.Id = @CartId AND Products_Cart.ProductId = @ProductId
+
+    ELSE
+
+    /* new product */
+    INSERT INTO Products_Cart
+        (CartId, ProductId, Amount)
     VALUES
-        (@ProductId, @Amount, @Price)
+        (@CartId, @ProductId, @Amount)
 END
     GO
-EXEC InsertIntoCart 3, 4, 220
+
+SELECT *
+FROM Cart GO
+EXEC InsertIntoCart  2, 2, 5
+GO
+SELECT *
+FROM Products_Cart  where CartId = 2
+
 GO
 
 
 /* UpdateCart */
-CREATE OR ALTER PROCEDURE UpdateCart
-    (@CartId int,
-    @ProductId int,
-    @Amount int,
-    @Price int)
-AS
-BEGIN
-    UPDATE Cart
-	SET Cart.Amount = Cart.Amount + @Amount, Cart.Price = @Price
-	WHERE Cart.Id = @CartId
-        AND Cart.ProductId = @ProductId
-END
-    GO
+-- CREATE OR ALTER PROCEDURE UpdateCart
+--     (@CartId int,
+--     @ProductId int,
+--     @Amount int,
+--     @Price int)
+-- AS
+-- BEGIN
+--     UPDATE Cart
+-- 	SET Cart.Amount = Cart.Amount + @Amount, Cart.Price = @Price
+-- 	WHERE Cart.Id = @CartId
+--         AND Cart.ProductId = @ProductId
+-- END
+--     GO
 
-UpdateCart 10, 1, 4, 220
-	GO
+-- UpdateCart 10, 1, 4, 220
+-- 	GO
 
 
 /* GetCart */
@@ -112,7 +141,7 @@ CREATE OR ALTER PROCEDURE GetCart
     (@CartId int)
 AS
 BEGIN
-    SELECT p.Name, c.Amount, c.Price, c.Sum
+    SELECT p.Name
     FROM Cart c
         INNER JOIN Products p ON c.ProductId = p.Id
     WHERE c.Id = @CartId;
@@ -120,4 +149,5 @@ END
     GO
 EXEC GetCart 10
 
-select * from Cart
+SELECT *
+FROM Cart

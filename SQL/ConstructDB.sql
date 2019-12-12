@@ -167,8 +167,9 @@ GO
 CREATE TABLE Products_Cart
 (
     Id int IDENTITY(1,1),
+    CartId int NOT NULL,
     ProductId int NOT NULL,
-    CartId int NOT NULL
+    Amount int NOT NULL
 )
 
 /* Cart */
@@ -178,10 +179,8 @@ GO
 CREATE TABLE Cart
 (
     Id int IDENTITY(1,1),
-    ProductId int NOT NULL,
-    Amount int NOT NULL,
-    Price int NOT NULL,
-    Sum int
+    CustomerId int UNIQUE,
+    TimeCreated DATETIME DEFAULT GETDATE()
 )
 
 /* Orders */

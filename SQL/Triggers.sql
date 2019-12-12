@@ -25,16 +25,25 @@ GO
 
 
 /* UpdateSumCart */
-CREATE OR ALTER TRIGGER UpdateSumCart
-ON Cart
-AFTER INSERT
-AS
-BEGIN
-    UPDATE Cart SET Sum = Cart.Amount * Cart.Price
-    FROM inserted
-    WHERE Cart.Id = inserted.Id
-END
-GO
+-- CREATE OR ALTER TRIGGER UpdateSumCart
+-- ON Cart
+-- AFTER INSERT, UPDATE, DELETE
+-- AS
+-- BEGIN
+--     UPDATE Cart SET Sum = Cart.Amount * Cart.Price
+--     FROM inserted
+--     WHERE Cart.Id = inserted.Id
+-- END
+-- GO
+
+-- INSERT into Cart (ProductId, Amount, Price)
+-- VALUES (1, 4, 500);
+
+-- select * from cart;
+
+-- truncate table Cart
+-- go
+
 
 
 /* UpdateSumOrder */
