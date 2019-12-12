@@ -224,6 +224,8 @@ CREATE TABLE StockAdjustments
     Name varchar(30)
 )
 
+GO
+
 INSERT INTO Reasons
     (Name)
 VALUES
