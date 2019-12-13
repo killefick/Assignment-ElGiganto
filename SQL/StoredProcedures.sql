@@ -81,7 +81,7 @@ FROM Carts;
 GO
 
 
-/* Inser into cart */
+/* Insert into cart */
 CREATE OR ALTER PROCEDURE InsertIntoCart
     (@CartId int,
     @ProductId int,
@@ -141,42 +141,23 @@ GO
 SELECT *
 FROM Carts
 GO
---  En order skapas till kunden
--- Artikeln reserveras i lager
---  Varukorgen tas bort
---  Ordernummer returneras
+
+
+
 /* Checkout cart */
-SELECT *
-FROM Customers
-SELECT *
-FROM Products_Cart
-SELECT *
-FROM Orders
-GO
-
-
--- UPDATE
---   books
--- SET
---   books.primary_author = authors.name
--- FROM
---   books
--- INNER JOIN
---   authors
--- ON
---   books.author_id = authors.id
--- WHERE
---   books.title = 'The Hobbit'
-
 CREATE OR ALTER PROCEDURE CheckoutCart
-    (@CustomerId int)
+    (@CustomerId int,
+    @CartId int)
 AS
 BEGIN
+    DECLARE @OrderId int
     -- create order and insert customer id
     INSERT INTO Orders
         (CustomerId)
     VALUES
         (@CustomerId)
+
+    SET @OrderId = SCOPE_IDENTITY()
 
     -- update customer details
     UPDATE Orders
@@ -189,61 +170,47 @@ BEGIN
         INNER JOIN Customers c ON o.CustomerId = c.Id
     WHERE o.CustomerId = @CustomerId
 
-    RETURN SCOPE_IDENTITY()
+    -- move products from cart
+    INSERT INTO Products_Order
+        (OrderId, ProductId, Amount)
+    SELECT @OrderId, Products_Cart.ProductId, Products_Cart.Amount
+    FROM Products_Cart
+    WHERE Products_Cart.CartId = @CartId
+
+    -- empty cart
+    delete from Products_Cart
+    WHERE Products_Cart.CartId = @CartId
 END
     GO
 
 DECLARE @OrderIdOut int;
-EXEC @OrderIdOut = CheckoutCart 1
+EXEC CheckoutCart 1, 1
 SELECT @OrderIdOut AS OrderId
 GO
 
+SELECT *
+FROM Products_Order
+
+SELECT *
+FROM Products_Cart
+--  En order skapas till kunden
+-- Artikeln reserveras i lager
+--  Varukorgen tas bort
+--  Ordernummer returneras
 
 
--- CREATE OR ALTER PROCEDURE CheckoutCart
---     (@CustomerId int)
--- AS
--- BEGIN
---     -- create order and insert customer id
---     INSERT INTO Orders
---         (CustomerId)
---     VALUES
---         (1)
---     -- insert cart data
---     INSERT INTO Orders
---         (ProductId,
---         Amount)
---     SELECT ProductId, 
---         Amount
---     FROM Products_Cart
---     WHERE Products_Cart.CartId = @CustomerId
 
---     -- insert customer data
---     INSERT INTO Orders
---         (
---         CustomerName,
---         CustomerStreet,
---         CustomerZip,
---         CustomerCity,
---         CustomerPhone
---         )
---     SELECT
---         CustomerName,
---         CustomerStreet,
---         CustomerZip,
---         CustomerCity,
---         CustomerPhone
---     FROM Customers
---     WHERE Customers.Id = @CustomerId
 
---     RETURN SCOPE_IDENTITY()
--- END
---     GO
 
--- DECLARE @OrderIdOut int;
--- EXEC @OrderIdOut = CheckoutCart 1
--- SELECT @OrderIdOut AS OrderId
--- GO
-
-GO
-
+--     UPDATE
+--   books
+-- SET
+--   books.primary_author = authors.name
+-- FROM
+--   books
+-- INNER JOIN
+--   authors
+-- ON
+--   books.author_id = authors.id
+-- WHERE
+--   books.title = 'The Hobbit'
