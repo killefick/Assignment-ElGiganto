@@ -1,3 +1,17 @@
+CREATE OR ALTER PROCEDURE test
+    (@tal1 int,
+    @tal2 int,
+    @summa int output)
+AS
+SET @summa = @tal1 + @tal2
+
+GO
+DECLARE @sum int;
+EXEC test 1,2, @summa = @sum output
+SELECT @sum;
+GO
+
+
 /* GetAllProducts */
 CREATE OR ALTER PROCEDURE GetAllProducts
 AS
@@ -178,7 +192,7 @@ BEGIN
     WHERE Products_Cart.CartId = @CartId
 
     -- empty cart
-    delete from Products_Cart
+    DELETE FROM Products_Cart
     WHERE Products_Cart.CartId = @CartId
 END
     GO
@@ -193,24 +207,6 @@ FROM Products_Order
 
 SELECT *
 FROM Products_Cart
---  En order skapas till kunden
 -- Artikeln reserveras i lager
---  Varukorgen tas bort
 --  Ordernummer returneras
 
-
-
-
-
---     UPDATE
---   books
--- SET
---   books.primary_author = authors.name
--- FROM
---   books
--- INNER JOIN
---   authors
--- ON
---   books.author_id = authors.id
--- WHERE
---   books.title = 'The Hobbit'
