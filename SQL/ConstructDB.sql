@@ -40,7 +40,7 @@ CREATE TABLE Products
     Name varchar(50) NOT NULL,
     ProductDetails varchar(250),
     Price int NOT NULL,
-    InStock BIT NOT NULL DEFAULT 1,
+    InStock bit NOT NULL DEFAULT 1,
     Popularity int NOT NULL DEFAULT 0,
     /* ska bli foreign key! */
     CategoryId int
@@ -173,8 +173,8 @@ CREATE TABLE Products_Cart
     Sum int
 )
 -- creates index
-create unique index IX_CartId_ProductId 
-      on Products_Cart (CartId, ProductId ASC) 
+CREATE UNIQUE INDEX IX_CartId_ProductId 
+      ON Products_Cart (CartId, ProductId ASC)
 
 
 
@@ -186,7 +186,7 @@ CREATE TABLE Carts
 (
     Id int IDENTITY(1,1),
     CustomerId int UNIQUE,
-    DateTimeCreated DATETIME DEFAULT GETDATE()
+    DateTimeCreated datetime DEFAULT GETDATE()
 )
 
 /* Orders */
@@ -196,19 +196,26 @@ GO
 CREATE TABLE Orders
 (
     Id int IDENTITY(1,1),
-    ProductId int NOT NULL,
-    Amount int NOT NULL,
-    Price int NOT NULL,
-    Sum int NOT NULL,
-    Total int NOT NULL,
-    AmountReturned int NOT NULL DEFAULT 0,
     CustomerId int,
-    CustomerName VARCHAR(100),
-    CustomerStreet VARCHAR(100),
-    CustomerZip VARCHAR(10),
-    CustomerCity VARCHAR(50),
-    CustomerPhone VARCHAR(20),
-    DateTimeCreated DATETIME DEFAULT GETDATE()
+    CustomerName varchar(100),
+    CustomerStreet varchar(100),
+    CustomerZip varchar(10),
+    CustomerCity varchar(50),
+    DateTimeCreated datetime DEFAULT GETDATE()
+)
+
+/* Products_Order */
+DROP TABLE Products_Order
+GO
+
+CREATE TABLE Products_Order
+(
+    Id int IDENTITY(1,1),
+    OrderId int,
+    ProductId int,
+    Amount int,
+    Sum int, 
+    AmountReturned int NOT NULL DEFAULT 0,
 )
 
 /* Customers */
@@ -218,13 +225,22 @@ GO
 CREATE TABLE Customers
 (
     Id int IDENTITY(1,1),
-    CustomerName VARCHAR(100),
-    CustomerStreet VARCHAR(100),
-    CustomerZip VARCHAR(10),
-    CustomerCity VARCHAR(50),
-    CustomerPhone VARCHAR(20),
-    CustomerEmail VARCHAR(50),
+    CustomerName varchar(100),
+    CustomerStreet varchar(100),
+    CustomerZip varchar(10),
+    CustomerCity varchar(50),
+    CustomerPhone varchar(20),
+    CustomerEmail varchar(50)
 )
+GO
+
+INSERT INTO Customers
+    (CustomerName, CustomerStreet, CustomerZip, CustomerCity, CustomerPhone, CustomerEmail)
+VALUES
+    ('Kalle Stropp', 'Sjövägen 34', 12345, 'Sjöbo', '031-123 333 22', 'kalle@stropp.se')
+GO
+
+select * from Customers
 
 /* Transactions */
 DROP TABLE Transactions

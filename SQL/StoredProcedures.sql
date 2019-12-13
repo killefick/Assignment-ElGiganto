@@ -60,7 +60,7 @@ END
 
 
 DECLARE @CartIdOut int;
-EXEC @CartIdOut = CreateCart 2
+EXEC @CartIdOut = CreateCart 1
 SELECT @CartIdOut AS CartId
 GO
 
@@ -110,8 +110,10 @@ END
 
 SELECT *
 FROM Products_Cart GO
-EXEC InsertIntoCart  1, 2, -5
+
+EXEC InsertIntoCart  1, 12, 5
 GO
+
 SELECT *
 FROM Products_Cart
 WHERE CartId = 1
@@ -123,13 +125,18 @@ CREATE OR ALTER PROCEDURE GetCart
     (@CartId int)
 AS
 BEGIN
-    SELECT p.Name
-    FROM Carts c
-        INNER JOIN Products p ON c.ProductId = p.Id
-    WHERE c.Id = @CartId;
+    SELECT p.Name, p.Price, pc.Amount, pc.[Sum]
+    FROM Products_Cart pc
+        INNER JOIN Products p ON pc.ProductId = p.Id
+    WHERE pc.Id = @CartId;
 END
     GO
-EXEC GetCart 10
+
+EXEC GetCart 2
+
+SELECT *
+FROM Products_Cart
+GO
 
 SELECT *
 FROM Carts
@@ -139,47 +146,55 @@ GO
 --  Varukorgen tas bort
 --  Ordernummer returneras
 /* Checkout cart */
-CREATE OR ALTER PROCEDURE CheckoutCart
-    (@CustomerId int)
-AS
-BEGIN
-    -- create order and insert customer id
-    INSERT INTO Orders
-        (CustomerId)
-    VALUES
-        (@CustomerId)
+-- CREATE OR ALTER PROCEDURE CheckoutCart
+--     (@CustomerId int)
+-- AS
+-- BEGIN
+--     -- create order and insert customer id
+--     INSERT INTO Orders
+--         (CustomerId)
+--     VALUES
+--         (1)
+--     -- insert cart data
+--     INSERT INTO Orders
+--         (ProductId,
+--         Amount)
+--     SELECT ProductId, 
+--         Amount
+--     FROM Products_Cart
+--     WHERE Products_Cart.CartId = @CustomerId
 
-    -- insert cart data
-    INSERT INTO Orders
-        (ProductId,
-        Amount,
-        Price
-        )
-    SELECT ProductId,
-        Amount,
-        Price
-    FROM Products_Cart
-    WHERE Products_Cart.CartId = @CustomerId
+--     -- insert customer data
+--     INSERT INTO Orders
+--         (
+--         CustomerName,
+--         CustomerStreet,
+--         CustomerZip,
+--         CustomerCity,
+--         CustomerPhone
+--         )
+--     SELECT
+--         CustomerName,
+--         CustomerStreet,
+--         CustomerZip,
+--         CustomerCity,
+--         CustomerPhone
+--     FROM Customers
+--     WHERE Customers.Id = @CustomerId
 
-    -- insert customer data
-    INSERT INTO Orders
-        (
-        CustomerName,
-        CustomerStreet,
-        CustomerZip,
-        CustomerCity,
-        CustomerPhone
-        )
-    SELECT
-        CustomerName,
-        CustomerStreet,
-        CustomerZip,
-        CustomerCity,
-        CustomerPhone
-    FROM Customers
-    WHERE Customers.Id = @CustomerId
+--     RETURN SCOPE_IDENTITY()
+-- END
+--     GO
 
+-- DECLARE @OrderIdOut int;
+-- EXEC @OrderIdOut = CheckoutCart 1
+-- SELECT @OrderIdOut AS OrderId
+-- GO
 
-    RETURN SCOPE_IDENTITY()
-END
-    GO
+GO
+
+select * from Customers
+select * from Products_Cart
+select * from Orders
+
+select * from Customers
