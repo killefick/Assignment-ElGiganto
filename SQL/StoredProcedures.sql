@@ -108,12 +108,11 @@ END
     GO
 
 SELECT *
-FROM Cart GO
-EXEC InsertIntoCart  2, 2, 5
+FROM Products_Cart GO
+EXEC InsertIntoCart  1, 2, -5
 GO
 SELECT *
-FROM Products_Cart  where CartId = 2
-
+FROM Products_Cart  where CartId = 1
 GO
 
 

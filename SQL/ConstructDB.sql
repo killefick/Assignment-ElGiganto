@@ -169,8 +169,14 @@ CREATE TABLE Products_Cart
     Id int IDENTITY(1,1),
     CartId int NOT NULL,
     ProductId int NOT NULL,
-    Amount int NOT NULL
+    Amount int NOT NULL,
+    Sum int
 )
+-- creates index
+create unique index IX_CartId_ProductId 
+      on Products_Cart (CartId, ProductId ASC) 
+
+
 
 /* Cart */
 DROP TABLE Cart
