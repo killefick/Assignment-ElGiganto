@@ -50,28 +50,32 @@ CREATE OR ALTER PROCEDURE CreateCart
     @CustomerId int
 AS
 BEGIN
-    INSERT INTO Carts (CustomerId)
-    VALUES (@CustomerId)
+    INSERT INTO Carts
+        (CustomerId)
+    VALUES
+        (@CustomerId)
     RETURN SCOPE_IDENTITY()
 END
     GO
 
 
 DECLARE @CartIdOut int;
-EXEC @CartIdOut = CreateCart 6
+EXEC @CartIdOut = CreateCart 2
 SELECT @CartIdOut AS CartId
 GO
 
 /* Delete carts older than 14 days */
-CREATE OR ALTER Procedure ClearOldCarts
+CREATE OR ALTER PROCEDURE ClearOldCarts
 AS
 BEGIN
-SELECT 
-FROM Carts
-SELECT DATEDIFF(WEEK, '2017/08/25', GETDATE()) AS DateDiff;
-
+    DELETE FROM Carts
+    WHERE (DATEDIFF(WEEK, DateTimeCreated, GETDATE())) >0
 END
 GO
+
+EXEC ClearOldCarts
+GO
+
 
 SELECT *
 FROM Carts;
@@ -109,7 +113,8 @@ FROM Products_Cart GO
 EXEC InsertIntoCart  1, 2, -5
 GO
 SELECT *
-FROM Products_Cart  where CartId = 1
+FROM Products_Cart
+WHERE CartId = 1
 GO
 
 
