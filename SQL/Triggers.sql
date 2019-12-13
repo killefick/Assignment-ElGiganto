@@ -24,26 +24,29 @@ END
 GO
 
 
-/* UpdateSumCart */
-CREATE OR ALTER TRIGGER UpdateSumCart
+
+/* AdjustCartValues */
+CREATE OR ALTER TRIGGER AdjustCartValues
 ON Products_Cart
-AFTER INSERT, UPDATE, DELETE
+AFTER INSERT, UPDATE
 AS
 BEGIN
-    UPDATE Products_Cart SET Sum = Products_Cart.Amount * Products.Price
+    --calculate sum
+    UPDATE Products_Cart SET Products_Cart.Sum = Products_Cart.Amount * Products.Price
     FROM inserted
-    INNER JOIN Products on inserted.ProductId = Products.Id
+        INNER JOIN Products ON inserted.ProductId = Products.Id
     WHERE Products_Cart.Id = inserted.Id
+    -- check for amount = 0
+    DELETE Products_Cart 
+    FROM inserted
+    WHERE Products_Cart.Id = inserted.Id
+        AND Products_Cart.Amount = 0
 END
 GO
 
--- INSERT into Cart (ProductId, Amount, Price)
--- VALUES (1, 4, 500);
-
--- select * from Products_Cart;
-
--- truncate table Cart
--- go
+SELECT *
+FROM Products_Cart;
+GO
 
 
 
@@ -80,16 +83,16 @@ ON StockBalance
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN
-	UPDATE StockBalance
+    UPDATE StockBalance
 	SET StockBalance.Available = StockBalance.InStock - StockBalance.Reserved
 	FROM inserted
 	WHERE StockBalance.Id = inserted.Id
-	
-   --     CASE
-   --       WHEN StockBalance.Available <= 0 
-			--THEN UPDATE Products
-			--SET Products.InStock = 0
-   --     END
+
+--     CASE
+--       WHEN StockBalance.Available <= 0 
+--THEN UPDATE Products
+--SET Products.InStock = 0
+--     END
 END
 GO
 

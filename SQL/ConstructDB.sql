@@ -186,7 +186,7 @@ CREATE TABLE Cart
 (
     Id int IDENTITY(1,1),
     CustomerId int UNIQUE,
-    TimeCreated DATETIME DEFAULT GETDATE()
+    DateTimeCreated DATETIME DEFAULT GETDATE()
 )
 
 /* Orders */
@@ -200,7 +200,10 @@ CREATE TABLE Orders
     Amount int NOT NULL,
     Price int NOT NULL,
     Sum int NOT NULL,
-    AmountReturned int NOT NULL DEFAULT 0
+    AmountReturned int NOT NULL DEFAULT 0,
+    CustomerId int,
+    CustomerName VARCHAR(100),
+    DateTimeCreated DATETIME DEFAULT GETDATE()
 )
 
 /* Transactions */
@@ -210,7 +213,7 @@ GO
 CREATE TABLE Transactions
 (
     Id int IDENTITY(1,1),
-    /* kan vara null om enbart lagerInStockt behöver justeras*/
+    /* kan vara null om enbart lagersaldo behöver justeras*/
     OrderId int,
     ProductId int NOT NULL,
     StockChange int NOT NULL,
