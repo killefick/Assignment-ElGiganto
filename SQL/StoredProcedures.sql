@@ -50,7 +50,7 @@ CREATE OR ALTER PROCEDURE CreateCart
     @CustomerId int
 AS
 BEGIN
-    INSERT INTO Cart (CustomerId)
+    INSERT INTO Carts (CustomerId)
     VALUES (@CustomerId)
     RETURN SCOPE_IDENTITY()
 END
@@ -62,24 +62,21 @@ EXEC @CartIdOut = CreateCart 6
 SELECT @CartIdOut AS CartId
 GO
 
-SELECT *
-FROM cart
+/* Delete carts older than 14 days */
+CREATE OR ALTER Procedure ClearOldCarts
+AS
+BEGIN
+SELECT 
+FROM Carts
+SELECT DATEDIFF(WEEK, '2017/08/25', GETDATE()) AS DateDiff;
+
+END
 GO
 
+SELECT *
+FROM Carts;
+GO
 
-/* InsertIntoCart */
--- CREATE OR ALTER PROCEDURE InsertIntoCart
---     (@CartId int,
---     @ProductId int,
---     @Amount int,
---     @Price int)
--- AS
--- BEGIN
---     UPDATE Cart
---   SET Amount += @Amount, Price = @Price
---     WHERE Cart.Id = @CartId AND Cart.ProductId = @ProductId
--- END
---     GO
 
 CREATE OR ALTER PROCEDURE InsertIntoCart
     (@CartId int,
@@ -116,24 +113,6 @@ FROM Products_Cart  where CartId = 1
 GO
 
 
-/* UpdateCart */
--- CREATE OR ALTER PROCEDURE UpdateCart
---     (@CartId int,
---     @ProductId int,
---     @Amount int,
---     @Price int)
--- AS
--- BEGIN
---     UPDATE Cart
--- 	SET Cart.Amount = Cart.Amount + @Amount, Cart.Price = @Price
--- 	WHERE Cart.Id = @CartId
---         AND Cart.ProductId = @ProductId
--- END
---     GO
-
--- UpdateCart 10, 1, 4, 220
--- 	GO
-
 
 /* GetCart */
 CREATE OR ALTER PROCEDURE GetCart
@@ -141,7 +120,7 @@ CREATE OR ALTER PROCEDURE GetCart
 AS
 BEGIN
     SELECT p.Name
-    FROM Cart c
+    FROM Carts c
         INNER JOIN Products p ON c.ProductId = p.Id
     WHERE c.Id = @CartId;
 END
@@ -149,4 +128,4 @@ END
 EXEC GetCart 10
 
 SELECT *
-FROM Cart
+FROM Carts

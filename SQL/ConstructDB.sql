@@ -178,11 +178,11 @@ create unique index IX_CartId_ProductId
 
 
 
-/* Cart */
-DROP TABLE Cart
+/* Carts */
+DROP TABLE Carts
 GO
 
-CREATE TABLE Cart
+CREATE TABLE Carts
 (
     Id int IDENTITY(1,1),
     CustomerId int UNIQUE,

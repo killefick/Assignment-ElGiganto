@@ -44,9 +44,7 @@ BEGIN
 END
 GO
 
-SELECT *
-FROM Products_Cart;
-GO
+
 
 
 
