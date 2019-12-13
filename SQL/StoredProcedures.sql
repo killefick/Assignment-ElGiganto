@@ -76,12 +76,12 @@ GO
 EXEC ClearOldCarts
 GO
 
-
 SELECT *
 FROM Carts;
 GO
 
 
+/* Inser into cart */
 CREATE OR ALTER PROCEDURE InsertIntoCart
     (@CartId int,
     @ProductId int,
@@ -118,7 +118,6 @@ WHERE CartId = 1
 GO
 
 
-
 /* GetCart */
 CREATE OR ALTER PROCEDURE GetCart
     (@CartId int)
@@ -134,3 +133,53 @@ EXEC GetCart 10
 
 SELECT *
 FROM Carts
+GO
+--  En order skapas till kunden
+-- Artikeln reserveras i lager
+--  Varukorgen tas bort
+--  Ordernummer returneras
+/* Checkout cart */
+CREATE OR ALTER PROCEDURE CheckoutCart
+    (@CustomerId int)
+AS
+BEGIN
+    -- create order and insert customer id
+    INSERT INTO Orders
+        (CustomerId)
+    VALUES
+        (@CustomerId)
+
+    -- insert cart data
+    INSERT INTO Orders
+        (ProductId,
+        Amount,
+        Price
+        )
+    SELECT ProductId,
+        Amount,
+        Price
+    FROM Products_Cart
+    WHERE Products_Cart.CartId = @CustomerId
+
+    -- insert customer data
+    INSERT INTO Orders
+        (
+        CustomerName,
+        CustomerStreet,
+        CustomerZip,
+        CustomerCity,
+        CustomerPhone
+        )
+    SELECT
+        CustomerName,
+        CustomerStreet,
+        CustomerZip,
+        CustomerCity,
+        CustomerPhone
+    FROM Customers
+    WHERE Customers.Id = @CustomerId
+
+
+    RETURN SCOPE_IDENTITY()
+END
+    GO

@@ -200,10 +200,30 @@ CREATE TABLE Orders
     Amount int NOT NULL,
     Price int NOT NULL,
     Sum int NOT NULL,
+    Total int NOT NULL,
     AmountReturned int NOT NULL DEFAULT 0,
     CustomerId int,
     CustomerName VARCHAR(100),
+    CustomerStreet VARCHAR(100),
+    CustomerZip VARCHAR(10),
+    CustomerCity VARCHAR(50),
+    CustomerPhone VARCHAR(20),
     DateTimeCreated DATETIME DEFAULT GETDATE()
+)
+
+/* Customers */
+DROP TABLE Customers
+GO
+
+CREATE TABLE Customers
+(
+    Id int IDENTITY(1,1),
+    CustomerName VARCHAR(100),
+    CustomerStreet VARCHAR(100),
+    CustomerZip VARCHAR(10),
+    CustomerCity VARCHAR(50),
+    CustomerPhone VARCHAR(20),
+    CustomerEmail VARCHAR(50),
 )
 
 /* Transactions */
