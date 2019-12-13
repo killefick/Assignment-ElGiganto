@@ -146,6 +146,60 @@ GO
 --  Varukorgen tas bort
 --  Ordernummer returneras
 /* Checkout cart */
+SELECT *
+FROM Customers
+SELECT *
+FROM Products_Cart
+SELECT *
+FROM Orders
+GO
+
+
+-- UPDATE
+--   books
+-- SET
+--   books.primary_author = authors.name
+-- FROM
+--   books
+-- INNER JOIN
+--   authors
+-- ON
+--   books.author_id = authors.id
+-- WHERE
+--   books.title = 'The Hobbit'
+
+CREATE OR ALTER PROCEDURE CheckoutCart
+    (@CustomerId int)
+AS
+BEGIN
+    -- create order and insert customer id
+    INSERT INTO Orders
+        (CustomerId)
+    VALUES
+        (@CustomerId)
+
+    -- update customer details
+    UPDATE Orders
+   SET 
+        Orders.CustomerName = c.CustomerName,
+        Orders.CustomerStreet = c.CustomerStreet,
+        Orders.CustomerZip = c.CustomerZip,
+        Orders.CustomerCity = c.CustomerCity
+    FROM Orders o
+        INNER JOIN Customers c ON o.CustomerId = c.Id
+    WHERE o.CustomerId = @CustomerId
+
+    RETURN SCOPE_IDENTITY()
+END
+    GO
+
+DECLARE @OrderIdOut int;
+EXEC @OrderIdOut = CheckoutCart 1
+SELECT @OrderIdOut AS OrderId
+GO
+
+
+
 -- CREATE OR ALTER PROCEDURE CheckoutCart
 --     (@CustomerId int)
 -- AS
@@ -193,8 +247,3 @@ GO
 
 GO
 
-select * from Customers
-select * from Products_Cart
-select * from Orders
-
-select * from Customers
