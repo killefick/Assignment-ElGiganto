@@ -11,6 +11,8 @@ END
 GO
 
 
+
+
 /* Popularity +10 */
 CREATE OR ALTER TRIGGER Popularity_10
 ON Orders
@@ -47,18 +49,22 @@ GO
 
 
 
-
 /* UpdateSumOrder */
 CREATE OR ALTER TRIGGER UpdateSumOrder
-ON Orders
-AFTER INSERT
+ON Products_Order
+AFTER INSERT, UPDATE
 AS
 BEGIN
-    UPDATE Orders SET Sum = inserted.Amount * inserted.Price
+    UPDATE Products_Order SET Sum = inserted.Amount * Products.Price
     FROM inserted
-    WHERE Orders.Id = inserted.Id
+    INNER JOIN Products p
+    ON Products_Order.ProductId = p.Id
+    WHERE Products_Order.ProductId = inserted.Id
 END
 GO
+
+select * from orders
+select * from Products_Order
 
 /* StockAdjustments */
 --DROP TRIGGER Adjust 
@@ -75,22 +81,19 @@ GO
 --END
 --GO
 
+
+
+
 /* CalculateStockBalance */
 CREATE OR ALTER TRIGGER CalculateStockBalance
-ON StockBalance
-AFTER INSERT, UPDATE, DELETE
+ON Warehouse
+AFTER INSERT, UPDATE
 AS
 BEGIN
-    UPDATE StockBalance
-	SET StockBalance.Available = StockBalance.InStock - StockBalance.Reserved
+    UPDATE Warehouse
+	SET Warehouse.Available = Warehouse.InStock - Warehouse.Reserved
 	FROM inserted
-	WHERE StockBalance.Id = inserted.Id
-
---     CASE
---       WHEN StockBalance.Available <= 0 
---THEN UPDATE Products
---SET Products.InStock = 0
---     END
+	WHERE Warehouse.Id = inserted.Id
 END
 GO
 

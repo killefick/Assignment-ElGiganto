@@ -96,12 +96,12 @@ INSERT INTO Products
 VALUES('Black velvet', 'Våga vara på mörka sidan', 149 , 5)
 
 
-/* StockBalance */
+/* Warehouse */
 
-DROP TABLE StockBalance
+DROP TABLE Warehouse
 GO
 
-CREATE TABLE StockBalance
+CREATE TABLE Warehouse
 (
     Id int IDENTITY(1,1),
     ProductId int NOT NULL,
@@ -110,54 +110,66 @@ CREATE TABLE StockBalance
     Available int
 )
 
-INSERT INTO StockBalance
+INSERT INTO Warehouse
     (ProductId, InStock, Reserved, Available)
-VALUES(1, 300, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(2, 300, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(3, 0, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(4, 345, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(4, 33, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(5, 0, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(6, 233, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(7, 0, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(8, 133, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(9, 43, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(10, 3, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(11, 567, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(12, 567, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(13, 24, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(14, 34, 3, 297)
-INSERT INTO StockBalance
-    (ProductId, InStock, Reserved, Available)
-VALUES(15, 24, 3, 297)
+VALUES(1, 100, 0, 100)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(2, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(3, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(4, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(5, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(6, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(7, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(8, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(9, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(10, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(11, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(12, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(13, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(14, 100, 0)
+
+INSERT INTO Warehouse
+    (ProductId, InStock, Reserved)
+VALUES(15, 100, 0)
+
 GO
 
 /* Products_Cart */

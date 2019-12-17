@@ -139,14 +139,14 @@ CREATE OR ALTER PROCEDURE GetCart
     (@CartId int)
 AS
 BEGIN
-    SELECT p.Name, p.Price, pc.Amount, pc.[Sum]
+    SELECT p.Name, pc.Amount, p.Price, pc.Sum
     FROM Products_Cart pc
         INNER JOIN Products p ON pc.ProductId = p.Id
-    WHERE pc.Id = @CartId;
+    WHERE pc.CartId = @CartId;
 END
     GO
 
-EXEC GetCart 2
+EXEC GetCart 1
 
 SELECT *
 FROM Products_Cart
@@ -175,7 +175,7 @@ BEGIN
 
     -- update customer details
     UPDATE Orders
-   SET 
+    SET 
         Orders.CustomerName = c.CustomerName,
         Orders.CustomerStreet = c.CustomerStreet,
         Orders.CustomerZip = c.CustomerZip,
@@ -194,6 +194,14 @@ BEGIN
     -- empty cart
     DELETE FROM Products_Cart
     WHERE Products_Cart.CartId = @CartId
+
+    -- reserve products in warehouse
+    UPDATE Warehouse
+    SET Warehouse.Reserved = pc.Amount
+    FROM Warehouse w
+    INNER JOIN Products_Cart pc
+    ON w.ProductId = pc.ProductId
+    WHERE w.ProductId = pc.ProductId
 END
     GO
 
