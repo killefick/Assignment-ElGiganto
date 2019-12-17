@@ -61,8 +61,8 @@ BEGIN
 END
 GO
 
-DELETE from products_order
-go
+DELETE FROM products_order
+GO
 
 
 /* CalculateStockBalance */
@@ -78,6 +78,17 @@ BEGIN
 END
 GO
 
-select * from Warehouse
+SELECT *
+FROM Warehouse
+GO
 
-
+-- /* LogStockTransaction */
+-- CREATE TRIGGER LogStockTransaction
+-- ON Products_Order
+-- AFTER UPDATE
+-- AS
+-- BEGIN
+-- UPDATE StockTransactions
+-- SET Ord
+--     END
+-- GO

@@ -125,7 +125,7 @@ END
 SELECT *
 FROM Products_Cart GO
 
-EXEC InsertIntoCart  1, 3, 3
+EXEC InsertIntoCart  1, 13, 2
 GO
 
 SELECT Name, Popularity
@@ -198,26 +198,37 @@ BEGIN
     FROM Products_Cart
     WHERE Products_Cart.CartId = @CartId
 
-    -- empty cart
-    DELETE FROM Products_Cart
-    WHERE Products_Cart.CartId = @CartId
-
     -- reserve products in warehouse
     UPDATE Warehouse
     SET Warehouse.Reserved = po.Amount
     FROM Products_Order po
     WHERE Warehouse.ProductId = po.ProductId
         AND po.Id = @OrderId
+
+    -- log stock transaction
+    INSERT INTO StockTransactions
+        (OrderId, ProductId, StockChange, DateTimeOfTransaction, TransactionId)
+    SELECT po.OrderId, po.ProductId, po.Amount, GETDATE(), 1
+    FROM Products_Order po
+    WHERE po.OrderId = @OrderId
 END
     GO
 
+
 DECLARE @randomNumber int;
-EXEC CheckoutCart 1,2, @OrderNumberToCustomer = @randomNumber output
-SELECT @randomNumber;
+EXEC CheckoutCart 1,1, @OrderNumberToCustomer = @randomNumber output
+-- SELECT @randomNumber;
 GO
+SELECT *
+FROM StockTransactions
 
 SELECT *
+FROM Products_Cart
+SELECT *
 FROM Products_Order
+
+
+
 
 SELECT *
 FROM Warehouse
@@ -225,6 +236,10 @@ FROM Warehouse
 SELECT *
 FROM Products
 GO
+
+
+
+
 
 /* Popularitetsrapport */
 CREATE OR ALTER PROCEDURE CheckPopularity
@@ -241,22 +256,21 @@ EXEC CheckPopularity 1
 
 
 
+-- SELECT CategoryId, Name, Popularity,
+--     RANK() OVER(PARTITION BY Popularity
+--   ORDER BY Popularity DESC) AS RowNumberRank
+-- FROM Products
+-- GROUP BY Popularity, CategoryId, Name
 
-SELECT CategoryId, Name, Popularity,
-    RANK() OVER(PARTITION BY Popularity
-  ORDER BY Popularity DESC) AS RowNumberRank
-FROM Products
-GROUP BY Popularity, CategoryId, Name
-
-SELECT TOP 5
-    CategoryId, Name, Popularity,
+-- SELECT TOP 5
+--     CategoryId, Name, Popularity,
 
 
-    RANK () OVER (
-ORDER BY Products.Popularity DESC
-) Ranking
-FROM
-    Products
+--     RANK () OVER (
+-- ORDER BY Products.Popularity DESC
+-- ) Ranking
+-- FROM
+--     Products
 
 -- SELECT
 --  v,

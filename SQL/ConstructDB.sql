@@ -226,7 +226,7 @@ CREATE TABLE Products_Order
     OrderId int,
     ProductId int,
     Amount int,
-    Sum int, 
+    Sum int,
     AmountReturned int NOT NULL DEFAULT 0,
 )
 
@@ -252,7 +252,23 @@ VALUES
     ('Kalle Stropp', 'Sjövägen 34', 12345, 'Sjöbo', '031-123 333 22', 'kalle@stropp.se')
 GO
 
-select * from Customers
+SELECT *
+FROM Customers
+
+/* StockTransactions */
+DROP TABLE StockTransactions
+GO
+
+CREATE TABLE StockTransactions
+(
+    Id int IDENTITY(1,1),
+    /* kan vara null om enbart lagersaldo behöver justeras*/
+    OrderId int,
+    ProductId int,
+    StockChange int,
+    DateTimeOfTransaction datetime,
+    TransactionId int
+)
 
 /* Transactions */
 DROP TABLE Transactions
@@ -261,37 +277,20 @@ GO
 CREATE TABLE Transactions
 (
     Id int IDENTITY(1,1),
-    /* kan vara null om enbart lagersaldo behöver justeras*/
-    OrderId int,
-    ProductId int NOT NULL,
-    StockChange int NOT NULL,
-    DateTime datetime NOT NULL,
-    Sum int NOT NULL,
-    /* foreign key */
-    ReasonId int NOT NULL
-)
-
-/* Reasons */
-DROP TABLE StockAdjustments
-GO
-
-CREATE TABLE StockAdjustments
-(
-    Id int IDENTITY(1,1),
     Name varchar(30)
 )
-
 GO
 
-INSERT INTO Reasons
+INSERT INTO Transactions
     (Name)
 VALUES
     ('Såld')
-INSERT INTO Reasons
+INSERT INTO Transactions
     (Name)
 VALUES
     ('Justering')
-INSERT INTO Reasons
+INSERT INTO Transactions
     (Name)
 VALUES
     ('Retur')
+    
