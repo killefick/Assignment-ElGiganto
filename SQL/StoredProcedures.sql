@@ -1,13 +1,13 @@
 CREATE OR ALTER PROCEDURE test
     (@tal1 int,
     @tal2 int,
-    @summa int output)
+    @summainternal int output)
 AS
-SET @summa = @tal1 + @tal2
+SET @summainternal = @tal1 + @tal2
 
 GO
 DECLARE @sum int;
-EXEC test 1,2, @summa = @sum output
+EXEC test 1,2, @summainternal = @sum output
 SELECT @sum;
 GO
 
@@ -125,7 +125,7 @@ END
 SELECT *
 FROM Products_Cart GO
 
-EXEC InsertIntoCart  1, 12, 5
+EXEC InsertIntoCart  1, 3, 5
 GO
 
 SELECT *
@@ -161,17 +161,21 @@ GO
 /* Checkout cart */
 CREATE OR ALTER PROCEDURE CheckoutCart
     (@CustomerId int,
-    @CartId int)
+    @CartId int,
+    @OrderNumberToCustomer int output)
 AS
 BEGIN
-    DECLARE @OrderId int
     -- create order and insert customer id
+    DECLARE @OrderId int
     INSERT INTO Orders
         (CustomerId)
     VALUES
         (@CustomerId)
 
     SET @OrderId = SCOPE_IDENTITY()
+
+    --generate random order number
+    SET @OrderNumberToCustomer = FLOOR(RAND()*(99999999-10000000+1))+10000000;
 
     -- update customer details
     UPDATE Orders
@@ -197,24 +201,23 @@ BEGIN
 
     -- reserve products in warehouse
     UPDATE Warehouse
-    SET Warehouse.Reserved = pc.Amount
-    FROM Warehouse w
-    INNER JOIN Products_Cart pc
-    ON w.ProductId = pc.ProductId
-    WHERE w.ProductId = pc.ProductId
+    SET Warehouse.Reserved = po.Amount
+    FROM Products_Order po
+    WHERE Warehouse.ProductId = po.ProductId
+    AND po.Id = @OrderId
 END
     GO
 
-DECLARE @OrderIdOut int;
-EXEC CheckoutCart 1, 1
-SELECT @OrderIdOut AS OrderId
+DECLARE @randomNumber int;
+EXEC CheckoutCart 1,2, @OrderNumberToCustomer = @randomNumber output
+SELECT @randomNumber;
 GO
 
 SELECT *
 FROM Products_Order
 
+select * from Warehouse
+
 SELECT *
 FROM Products_Cart
--- Artikeln reserveras i lager
---  Ordernummer returneras
 

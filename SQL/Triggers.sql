@@ -48,40 +48,22 @@ GO
 
 
 
-
-/* UpdateSumOrder */
-CREATE OR ALTER TRIGGER UpdateSumOrder
+/* CalculateSumOrder */
+CREATE OR ALTER TRIGGER CalculateSumOrder
 ON Products_Order
 AFTER INSERT, UPDATE
 AS
 BEGIN
-    UPDATE Products_Order SET Sum = inserted.Amount * Products.Price
+    --calculate sum
+    UPDATE Products_Order SET Products_Order.Sum = Products_Order.Amount * Products.Price
     FROM inserted
-    INNER JOIN Products p
-    ON Products_Order.ProductId = p.Id
-    WHERE Products_Order.ProductId = inserted.Id
+        INNER JOIN Products ON inserted.ProductId = Products.Id
+    WHERE Products_Order.Id = inserted.Id
 END
 GO
 
-select * from orders
-select * from Products_Order
-
-/* StockAdjustments */
---DROP TRIGGER Adjust 
---GO
-
---CREATE TRIGGER Adjust
---ON StockBalance
---AFTER INSERT, UPDATE, DELETE    
---AS
---BEGIN
---    UPDATE Transactions SET Transactions.DateTime = GETDATE()
---                            Transactions.StockChange = inserted.Amount
---    FROM inserted
---END
---GO
-
-
+DELETE from products_order
+go
 
 
 /* CalculateStockBalance */
@@ -96,5 +78,7 @@ BEGIN
 	WHERE Warehouse.Id = inserted.Id
 END
 GO
+
+select * from Warehouse
 
 
