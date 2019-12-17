@@ -211,9 +211,12 @@ BEGIN
     SELECT po.OrderId, po.ProductId, po.Amount, GETDATE(), 1
     FROM Products_Order po
     WHERE po.OrderId = @OrderId
+
+    -- empty cart
+    DELETE FROM Products_Cart
+    WHERE Products_Cart.CartId = @CartId
 END
     GO
-
 
 DECLARE @randomNumber int;
 EXEC CheckoutCart 1,1, @OrderNumberToCustomer = @randomNumber output
@@ -224,11 +227,9 @@ FROM StockTransactions
 
 SELECT *
 FROM Products_Cart
+
 SELECT *
 FROM Products_Order
-
-
-
 
 SELECT *
 FROM Warehouse
@@ -236,9 +237,6 @@ FROM Warehouse
 SELECT *
 FROM Products
 GO
-
-
-
 
 
 /* Popularitetsrapport */
