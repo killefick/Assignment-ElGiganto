@@ -77,7 +77,7 @@ VALUES('Skinn', 'svart', 399 , 3)
 
 INSERT INTO Products
     (Name, ProductDetails, Price, CategoryId)
-VALUES('Elefanten', 'Nameet som talar för sig självt', 119 , 4)
+VALUES('Elefanten', 'Namnet som talar för sig självt', 119 , 4)
 INSERT INTO Products
     (Name, ProductDetails, Price, CategoryId)
 VALUES('Shorts', '3-pack, svarta och vita', 159 , 4)
@@ -185,7 +185,7 @@ CREATE TABLE Products_Cart
     Sum int
 )
 -- creates index
-CREATE UNIQUE INDEX IX_CartId_ProductId 
+CREATE INDEX IX_CartId_ProductId 
       ON Products_Cart (CartId, ProductId ASC)
 
 

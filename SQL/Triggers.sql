@@ -6,22 +6,21 @@ AS
 BEGIN
     UPDATE Products SET Popularity +=5
     FROM inserted
-    WHERE Products.Id = inserted.Id
+    WHERE Products.Id = inserted.ProductId
 END
 GO
 
 
 
-
 /* Popularity +10 */
 CREATE OR ALTER TRIGGER Popularity_10
-ON Orders
+ON Products_Order
 AFTER INSERT
 AS
 BEGIN
     UPDATE Products SET Popularity +=10
     FROM inserted
-    WHERE Products.Id = inserted.Id
+    WHERE Products.Id = inserted.ProductId
 END
 GO
 

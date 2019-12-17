@@ -4,8 +4,8 @@ CREATE OR ALTER PROCEDURE test
     @summainternal int output)
 AS
 SET @summainternal = @tal1 + @tal2
-
 GO
+
 DECLARE @sum int;
 EXEC test 1,2, @summainternal = @sum output
 SELECT @sum;
@@ -125,8 +125,11 @@ END
 SELECT *
 FROM Products_Cart GO
 
-EXEC InsertIntoCart  1, 3, 5
+EXEC InsertIntoCart  1, 3, 3
 GO
+
+SELECT Name, Popularity
+FROM Products
 
 SELECT *
 FROM Products_Cart
@@ -204,7 +207,7 @@ BEGIN
     SET Warehouse.Reserved = po.Amount
     FROM Products_Order po
     WHERE Warehouse.ProductId = po.ProductId
-    AND po.Id = @OrderId
+        AND po.Id = @OrderId
 END
     GO
 
@@ -216,8 +219,49 @@ GO
 SELECT *
 FROM Products_Order
 
-select * from Warehouse
+SELECT *
+FROM Warehouse
 
 SELECT *
-FROM Products_Cart
+FROM Products
+GO
 
+/* Popularitetsrapport */
+CREATE OR ALTER PROCEDURE CheckPopularity
+    (@CategoryId int)
+AS
+SELECT TOP 5
+    CategoryId, Name, Popularity
+FROM Products
+WHERE CategoryId = @CategoryId
+ORDER BY Popularity DESC
+GO
+
+EXEC CheckPopularity 1
+
+
+
+
+SELECT CategoryId, Name, Popularity,
+    RANK() OVER(PARTITION BY Popularity
+  ORDER BY Popularity DESC) AS RowNumberRank
+FROM Products
+GROUP BY Popularity, CategoryId, Name
+
+SELECT TOP 5
+    CategoryId, Name, Popularity,
+
+
+    RANK () OVER (
+ORDER BY Products.Popularity DESC
+) Ranking
+FROM
+    Products
+
+-- SELECT
+--  v,
+--  RANK () OVER ( 
+--  ORDER BY v 
+--  ) rank_no 
+-- FROM
+--  sales.rank_demo;
