@@ -288,8 +288,32 @@ BEGIN
     WHERE Warehouse.ProductId = @ProductId
 END
 GO
-  
-exec StockAdjustment 1, -13, 2
+EXEC StockAdjustment 1, -13, 2
+GO
+
+/* ReturnOrder */
+CREATE OR ALTER PROCEDURE ReturnOrder
+    (@OrderId int,
+    @ProductId int,
+    @AmountReturned int,
+    @StockChange int = NULL
+)
+AS
+BEGIN
+    -- log stock transaction
+    INSERT INTO StockTransactions
+        (OrderId, ProductId, StockChange, DateTimeOfTransaction, TransactionId, AmountReturned)
+    VALUES(@OrderId, @ProductId, @StockChange, GETDATE(), 3, @AmountReturned)
+
+    IF @StockChange IS NOT NULL
+        -- justera lagersaldo
+        UPDATE Warehouse
+        SET Warehouse.InStock += @StockChange
+        WHERE Warehouse.ProductId = @ProductId
+END
+GO
+
+EXEC ReturnOrder 1, 1, 5
 SELECT *
 FROM Warehouse
 SELECT *

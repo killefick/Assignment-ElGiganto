@@ -265,7 +265,8 @@ CREATE TABLE StockTransactions
     /* kan vara null om enbart lagersaldo behöver justeras*/
     OrderId int,
     ProductId int NOT NULL,
-    StockChange int NOT NULL,
+    StockChange int,
+    AmountReturned int,
     DateTimeOfTransaction datetime NOT NULL,
     TransactionId int DEFAULT 2
 )
