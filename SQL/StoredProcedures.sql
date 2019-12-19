@@ -205,13 +205,6 @@ BEGIN
     WHERE Warehouse.ProductId = po.ProductId
         AND po.Id = @OrderId
 
-    -- log stock transaction
-    INSERT INTO StockTransactions
-        (OrderId, ProductId, StockChange, DateTimeOfTransaction, TransactionId)
-    SELECT po.OrderId, po.ProductId, po.Amount, GETDATE(), 1
-    FROM Products_Order po
-    WHERE po.OrderId = @OrderId
-
     -- empty cart
     DELETE FROM Products_Cart
     WHERE Products_Cart.CartId = @CartId
@@ -251,9 +244,46 @@ ORDER BY Popularity DESC
 GO
 
 EXEC CheckPopularity 1
+GO
 
+/* ShipOrder */
+CREATE OR ALTER PROCEDURE ShipOrder
+    (@OrderId int)
+AS
+BEGIN
+    -- log stock transaction
+    INSERT INTO StockTransactions
+        (OrderId, ProductId, StockChange, DateTimeOfTransaction, TransactionId)
+    SELECT po.OrderId, po.ProductId, po.Amount * (-1), GETDATE(), 1
+    FROM Products_Order po
+    WHERE po.OrderId = @OrderId
 
+    -- ta bort reservationen
+    UPDATE Warehouse
+    SET Warehouse.Reserved += StockTransactions.StockChange,
+    Warehouse.InStock += StockTransactions.StockChange
+    FROM Warehouse INNER JOIN StockTransactions
+        ON Warehouse.ProductId = StockTransactions.ProductId
+    WHERE Warehouse.ProductId = StockTransactions.ProductId
+        AND StockTransactions.OrderId = @OrderId
+END
+GO
 
+SELECT *
+FROM Warehouse
+EXEC ShipOrder 9
+SELECT *
+FROM Warehouse
+
+SELECT *
+FROM Products_Order
+SELECT *
+FROM StockTransactions
+SELECT *
+FROM Warehouse
+
+update Warehouse set Reserved = 5 WHERE id = 12
+DELETE FROM StockTransactions WHERE id < 17
 -- SELECT CategoryId, Name, Popularity,
 --     RANK() OVER(PARTITION BY Popularity
 --   ORDER BY Popularity DESC) AS RowNumberRank
