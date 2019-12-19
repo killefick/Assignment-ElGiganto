@@ -269,8 +269,35 @@ BEGIN
 END
 GO
 
+/* StockAdjustment */
+CREATE OR ALTER PROCEDURE StockAdjustment
+    (@ProductId int,
+    @StockChange int,
+    @TransactionId int
+)
+AS
+BEGIN
+    -- log stock transaction
+    INSERT INTO StockTransactions
+        (ProductId, StockChange, DateTimeOfTransaction, TransactionId)
+    VALUES(@ProductId, @StockChange, GETDATE(), @TransactionId)
+
+    -- justera lagersaldo
+    UPDATE Warehouse
+    SET Warehouse.InStock += @StockChange
+    WHERE Warehouse.ProductId = @ProductId
+END
+GO
+  
+exec StockAdjustment 1, -13, 2
 SELECT *
 FROM Warehouse
+SELECT *
+FROM StockTransactions
+
+SELECT *
+FROM Transactions
+GO
 EXEC ShipOrder 9
 SELECT *
 FROM Warehouse
@@ -282,7 +309,7 @@ FROM StockTransactions
 SELECT *
 FROM Warehouse
 
-update Warehouse set Reserved = 5 WHERE id = 12
+UPDATE Warehouse SET Reserved = 5 WHERE id = 12
 DELETE FROM StockTransactions WHERE id < 17
 -- SELECT CategoryId, Name, Popularity,
 --     RANK() OVER(PARTITION BY Popularity
