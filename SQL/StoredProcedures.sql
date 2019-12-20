@@ -330,6 +330,23 @@ GO
 EXEC ListAllOrdersTotalAmount
 GO
 
+/* CTE variant */
+WITH
+    TotalPerOrder (OrderId, OrderTotal)
+    AS
+    (
+        SELECT Products_Order.OrderId,
+            sum(Products_Order.Amount * Products.Price) AS OrderTotal
+        FROM Products_Order
+            INNER JOIN Products ON Products.Id = Products_Order.ProductId
+        WHERE Products_Order.ProductId = Products.Id
+        GROUP BY OrderId
+    )
+SELECT TotalPerOrder.*
+FROM TotalPerOrder
+ORDER BY OrderTotal DESC
+
+GO
 /* GetTotalAmountOfOrder */
 CREATE OR ALTER PROCEDURE GetTotalAmountOfOrder
     (@OrderId int)
@@ -346,7 +363,7 @@ END
 GO
 
 EXEC GetTotalAmountOfOrder 15
-go
+GO
 
 
 EXEC ReturnOrder 1, 1, 5
@@ -368,9 +385,28 @@ SELECT *
 FROM StockTransactions
 SELECT *
 FROM Warehouse
+GO
 
-UPDATE Warehouse SET Reserved = 5 WHERE id = 12
-DELETE FROM StockTransactions WHERE id < 17
+/* TopPopularProducts */
+WITH
+    TopPopularProducts (CategoryId, Name, Popularity)
+    AS
+    (
+        SELECT Products.CategoryId, Products.Name, Products.Popularity
+        FROM Products
+            INNER JOIN Categories ON Categories.Id = Products.CategoryId
+        -- WHERE Products_Order.ProductId = Products.Id
+        -- GROUP BY Products.Popularity
+    )
+SELECT TopPopularProducts.*
+-- ,RANK() OVER (PARTITION BY (Popularity) ORDER BY Popularity DESC) as Rank
+FROM TopPopularProducts
+GROUP BY CategoryId, Name, Popularity
+ORDER BY CategoryId, Popularity DESC
+
+
+
+
 -- SELECT CategoryId, Name, Popularity,
 --     RANK() OVER(PARTITION BY Popularity
 --   ORDER BY Popularity DESC) AS RowNumberRank
