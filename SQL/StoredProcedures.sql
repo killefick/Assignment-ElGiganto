@@ -318,7 +318,7 @@ BEGIN
         WHERE Warehouse.ProductId = @ProductId
 END
 GO
-EXEC ReturnOrder 17, 1, 10, 10
+EXEC ReturnOrder 19, 14, 222,223
 SELECT *
 FROM Warehouse
 SELECT *
@@ -422,3 +422,28 @@ GO
 SELECT *
 FROM MostPopular
 WHERE Ranking <= 5
+GO
+
+
+/* TopReturnedProducts */
+CREATE OR ALTER VIEW TopReturnedProducts
+AS
+    WITH
+        TopReturned(Name, AmountReturned)
+        AS
+        (
+            SELECT Products.Name, sum(StockTransactions.AmountReturned) AS AmountReturned
+            FROM Products
+                INNER JOIN StockTransactions ON Stocktransactions.ProductId = Products.Id
+            -- WHERE Products.CategoryId = Categories.Id
+            GROUP BY Products.Name
+        )
+    SELECT TopReturned.*,
+        ROW_Number() OVER (ORDER BY AmountReturned DESC) AS Ranking
+    FROM TopReturned
+    GROUP BY Name, AmountReturned
+GO
+
+SELECT TOP 5
+    *
+FROM TopReturnedProducts
