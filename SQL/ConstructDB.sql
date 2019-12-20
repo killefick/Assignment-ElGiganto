@@ -54,6 +54,15 @@ VALUES('Kappa', 'svart', 799 , 1)
 INSERT INTO Products
     (Name, ProductDetails, Price, CategoryId)
 VALUES('Bomberjacka', 'olika färger', 499 , 1)
+INSERT INTO Products
+    (Name, ProductDetails, Price, CategoryId)
+VALUES('Jeansjacka', 'blå', 199 , 1)
+INSERT INTO Products
+    (Name, ProductDetails, Price, CategoryId)
+VALUES('Sammetskappa', 'silver', 1499 , 1)
+INSERT INTO Products
+    (Name, ProductDetails, Price, CategoryId)
+VALUES('En helt jävla vanlig jacka', 'svart', 999 , 1)
 
 INSERT INTO Products
     (Name, ProductDetails, Price, CategoryId)

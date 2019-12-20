@@ -78,6 +78,7 @@ EXEC @CartIdOut = CreateCart 1
 SELECT @CartIdOut AS CartId
 GO
 
+
 /* Delete carts older than 14 days */
 CREATE OR ALTER PROCEDURE ClearOldCarts
 AS
@@ -113,7 +114,6 @@ BEGIN
     WHERE Products_Cart.Id = @CartId AND Products_Cart.ProductId = @ProductId
 
     ELSE
-
     /* new product */
     INSERT INTO Products_Cart
         (CartId, ProductId, Amount)
@@ -158,7 +158,6 @@ GO
 SELECT *
 FROM Carts
 GO
-
 
 
 /* Checkout cart */
@@ -269,6 +268,7 @@ BEGIN
 END
 GO
 
+
 /* StockAdjustment */
 CREATE OR ALTER PROCEDURE StockAdjustment
     (@ProductId int,
@@ -291,6 +291,7 @@ GO
 EXEC StockAdjustment 1, -13, 2
 GO
 
+
 /* ReturnOrder */
 CREATE OR ALTER PROCEDURE ReturnOrder
     (@OrderId int,
@@ -312,6 +313,7 @@ BEGIN
         WHERE Warehouse.ProductId = @ProductId
 END
 GO
+
 
 /* ListAllOrdersTotalAmount */
 CREATE OR ALTER PROCEDURE ListAllOrdersTotalAmount
@@ -345,8 +347,9 @@ WITH
 SELECT TotalPerOrder.*
 FROM TotalPerOrder
 ORDER BY OrderTotal DESC
-
 GO
+
+
 /* GetTotalAmountOfOrder */
 CREATE OR ALTER PROCEDURE GetTotalAmountOfOrder
     (@OrderId int)
@@ -387,46 +390,23 @@ SELECT *
 FROM Warehouse
 GO
 
+
 /* TopPopularProducts */
+CREATE or alter view MostPopular
+AS
 WITH
-    TopPopularProducts (CategoryId, Name, Popularity)
+    TopPopularProducts (Category, Name, Popularity)
     AS
     (
-        SELECT Products.CategoryId, Products.Name, Products.Popularity
+        SELECT Categories.Name, Products.Name, Products.Popularity
         FROM Products
             INNER JOIN Categories ON Categories.Id = Products.CategoryId
-        -- WHERE Products_Order.ProductId = Products.Id
-        -- GROUP BY Products.Popularity
+        WHERE Products.CategoryId = Categories.Id
     )
-SELECT TopPopularProducts.*
--- ,RANK() OVER (PARTITION BY (Popularity) ORDER BY Popularity DESC) as Rank
+SELECT TopPopularProducts.*,
+ROW_Number() OVER (PARTITION BY Category ORDER BY Popularity DESC) AS Ranking
 FROM TopPopularProducts
-GROUP BY CategoryId, Name, Popularity
-ORDER BY CategoryId, Popularity DESC
+GROUP BY Category, Name, Popularity
+go
 
-
-
-
--- SELECT CategoryId, Name, Popularity,
---     RANK() OVER(PARTITION BY Popularity
---   ORDER BY Popularity DESC) AS RowNumberRank
--- FROM Products
--- GROUP BY Popularity, CategoryId, Name
-
--- SELECT TOP 5
---     CategoryId, Name, Popularity,
-
-
---     RANK () OVER (
--- ORDER BY Products.Popularity DESC
--- ) Ranking
--- FROM
---     Products
-
--- SELECT
---  v,
---  RANK () OVER ( 
---  ORDER BY v 
---  ) rank_no 
--- FROM
---  sales.rank_demo;
+select * from MostPopular WHERE Ranking <=3
