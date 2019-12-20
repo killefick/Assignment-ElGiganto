@@ -313,6 +313,42 @@ BEGIN
 END
 GO
 
+/* ListAllOrdersTotalAmount */
+CREATE OR ALTER PROCEDURE ListAllOrdersTotalAmount
+AS
+BEGIN
+    SELECT Products_Order.OrderId,
+        sum(Products_Order.Amount * Products.Price) AS OrderTotal
+    FROM Products_Order
+        INNER JOIN Products ON Products.Id = Products_Order.ProductId
+    WHERE Products_Order.ProductId = Products.Id
+    GROUP BY OrderId
+    ORDER BY OrderTotal DESC
+END
+GO
+
+EXEC ListAllOrdersTotalAmount
+GO
+
+/* GetTotalAmountOfOrder */
+CREATE OR ALTER PROCEDURE GetTotalAmountOfOrder
+    (@OrderId int)
+AS
+BEGIN
+    SELECT Products_Order.OrderId,
+        sum(Products_Order.Amount * Products.Price) AS OrderTotal
+    FROM Products_Order
+        INNER JOIN Products ON Products.Id = Products_Order.ProductId
+    WHERE Products_Order.ProductId = Products.Id
+        AND Products_Order.OrderId = @OrderId
+    GROUP BY OrderId
+END
+GO
+
+EXEC GetTotalAmountOfOrder 15
+go
+
+
 EXEC ReturnOrder 1, 1, 5
 SELECT *
 FROM Warehouse
