@@ -11,7 +11,6 @@ END
 GO
 
 
-
 /* Popularity +10 */
 CREATE OR ALTER TRIGGER Popularity_10
 ON Products_Order
@@ -23,7 +22,6 @@ BEGIN
     WHERE Products.Id = inserted.ProductId
 END
 GO
-
 
 
 /* AdjustCartValues */
@@ -44,7 +42,6 @@ BEGIN
         AND Products_Cart.Amount = 0
 END
 GO
-
 
 
 /* CalculateSumOrder */
@@ -81,14 +78,3 @@ GO
 SELECT *
 FROM Warehouse
 GO
-
--- /* LogStockTransaction */
--- CREATE TRIGGER LogStockTransaction
--- ON Products_Order
--- AFTER UPDATE
--- AS
--- BEGIN
--- UPDATE StockTransactions
--- SET Ord
---     END
--- GO

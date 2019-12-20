@@ -1,27 +1,28 @@
-CREATE OR ALTER PROCEDURE test
-    (@tal1 int,
-    @tal2 int,
-    @summainternal int output)
-AS
-SET @summainternal = @tal1 + @tal2
-GO
+-- CREATE OR ALTER PROCEDURE test
+--     (@tal1 int,
+--     @tal2 int,
+--     @summainternal int output)
+-- AS
+-- SET @summainternal = @tal1 + @tal2
+-- GO
 
-DECLARE @sum int;
-EXEC test 1,2, @summainternal = @sum output
-SELECT @sum;
-GO
+-- DECLARE @sum int;
+-- EXEC test 1,2, @summainternal = @sum output
+-- SELECT @sum;
+-- GO
 
 
 /* GetAllProducts */
-CREATE OR ALTER PROCEDURE GetAllProducts
+CREATE OR ALTER VIEW GetAllProducts
 AS
-SELECT c.Name Category, p.Name Product, Price, InStock, Popularity
-FROM Products p
-    INNER JOIN Categories c
-    ON p.CategoryId = c.Id
+    SELECT c.Name Category, p.Name Product, Price, InStock, Popularity
+    FROM Products p
+        INNER JOIN Categories c
+        ON p.CategoryId = c.Id
 GO
 
-EXEC GetAllProducts
+SELECT Category, Product, Price
+FROM GetAllProducts
 GO
 
 
@@ -273,7 +274,7 @@ GO
 CREATE OR ALTER PROCEDURE StockAdjustment
     (@ProductId int,
     @StockChange int,
-    @TransactionId int
+    @TransactionId int = NULL
 )
 AS
 BEGIN
@@ -288,9 +289,13 @@ BEGIN
     WHERE Warehouse.ProductId = @ProductId
 END
 GO
-EXEC StockAdjustment 1, -13, 2
+EXEC StockAdjustment 1, 13
 GO
-
+SELECT *
+FROM Warehouse
+SELECT *
+FROM StockTransactions
+GO
 
 /* ReturnOrder */
 CREATE OR ALTER PROCEDURE ReturnOrder
@@ -313,7 +318,12 @@ BEGIN
         WHERE Warehouse.ProductId = @ProductId
 END
 GO
-
+EXEC ReturnOrder 17, 1, 10, 10
+SELECT *
+FROM Warehouse
+SELECT *
+FROM StockTransactions
+GO
 
 /* ListAllOrdersTotalAmount */
 CREATE OR ALTER PROCEDURE ListAllOrdersTotalAmount
@@ -392,21 +402,23 @@ GO
 
 
 /* TopPopularProducts */
-CREATE or alter view MostPopular
+CREATE OR ALTER VIEW MostPopular
 AS
-WITH
-    TopPopularProducts (Category, Name, Popularity)
-    AS
-    (
-        SELECT Categories.Name, Products.Name, Products.Popularity
-        FROM Products
-            INNER JOIN Categories ON Categories.Id = Products.CategoryId
-        WHERE Products.CategoryId = Categories.Id
-    )
-SELECT TopPopularProducts.*,
-ROW_Number() OVER (PARTITION BY Category ORDER BY Popularity DESC) AS Ranking
-FROM TopPopularProducts
-GROUP BY Category, Name, Popularity
-go
+    WITH
+        TopPopularProducts (Category, Name, Popularity)
+        AS
+        (
+            SELECT Categories.Name, Products.Name, Products.Popularity
+            FROM Products
+                INNER JOIN Categories ON Categories.Id = Products.CategoryId
+            WHERE Products.CategoryId = Categories.Id
+        )
+    SELECT TopPopularProducts.*,
+        ROW_Number() OVER (PARTITION BY Category ORDER BY Popularity DESC) AS Ranking
+    FROM TopPopularProducts
+    GROUP BY Category, Name, Popularity
+GO
 
-select * from MostPopular WHERE Ranking <=3
+SELECT *
+FROM MostPopular
+WHERE Ranking <= 5
