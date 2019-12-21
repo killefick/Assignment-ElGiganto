@@ -75,7 +75,7 @@ END
 
 
 DECLARE @CartIdOut int;
-EXEC @CartIdOut = CreateCart 1
+EXEC @CartIdOut = CreateCart 2
 SELECT @CartIdOut AS CartId
 GO
 
@@ -126,7 +126,7 @@ END
 SELECT *
 FROM Products_Cart GO
 
-EXEC InsertIntoCart  1, 13, 2
+EXEC InsertIntoCart  1, 6, 15
 GO
 
 SELECT Name, Popularity
@@ -211,12 +211,49 @@ BEGIN
 END
     GO
 
-DECLARE @randomNumber int;
-EXEC CheckoutCart 1,1, @OrderNumberToCustomer = @randomNumber output
--- SELECT @randomNumber;
+
+DECLARE @CartIdOut int;
+EXEC @CartIdOut = CreateCart 4
+SELECT @CartIdOut AS CartId
+
+SELECT *
+FROM carts
+EXEC InsertIntoCart   2, 8, 150
+EXEC InsertIntoCart  10, 9, 2000
+EXEC InsertIntoCart  11, 14, 99
+SELECT *
+FROM carts
+EXEC getcart 11
+GO
+
+
+SELECT *
+FROM Products_Cart
+
+
+-- DECLARE @sum int;
+-- EXEC test 1,2, @summainternal = @sum output
+-- SELECT @sum;
+
+
+DECLARE @orderno int;
+EXEC CheckoutCart 1, 7, @OrderNumberToCustomer = @orderno
+SELECT @orderno
+
+-- DECLARE @orderno int;
+-- EXEC CheckoutCart 2, 10, @OrderNumberToCustomer = @orderno
+-- SELECT @orderno
+
+-- DECLARE @orderno int;
+-- EXEC CheckoutCart 3, 11, @OrderNumberToCustomer = @orderno
+
 GO
 SELECT *
 FROM StockTransactions
+ORDER BY ID DESC
+
+
+
 
 SELECT *
 FROM Products_Cart
@@ -435,7 +472,6 @@ AS
             SELECT Products.Name, sum(StockTransactions.AmountReturned) AS AmountReturned
             FROM Products
                 INNER JOIN StockTransactions ON Stocktransactions.ProductId = Products.Id
-            -- WHERE Products.CategoryId = Categories.Id
             GROUP BY Products.Name
         )
     SELECT TopReturned.*,
@@ -447,3 +483,30 @@ GO
 SELECT TOP 5
     *
 FROM TopReturnedProducts
+go
+/* Kategorirapport */
+
+-- (en rad per kategori)
+--  Sålt antal innevarande månad
+--  Sålt antal föregående månad
+--  Sålt antal senaste 365 dagarna
+--  Returnerat antal innevarande månad
+--  Returnerat antal föregående månad
+--  Returnerat antal senaste 365 dagar
+
+-- CREATE OR ALTER VIEW SoldLast365Days
+-- AS
+--     (
+    SELECT c.Name as Kategori, st.StockChange AS Saldoändring
+    FROM Stocktransactions st
+        INNER JOIN Products p ON p.Id = st.ProductId
+        INNER JOIN Categories c ON p.CategoryId = c.Id
+    WHERE st.DateTimeOfTransaction > (GETDATE() - 365)
+        AND st.transactionid = 1
+        GROUP by c.Name, st.StockChange
+-- )
+GO
+
+
+SELECT *
+FROM StockTransactions

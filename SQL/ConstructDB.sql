@@ -40,7 +40,7 @@ CREATE TABLE Products
     Name varchar(50) NOT NULL,
     ProductDetails varchar(250),
     Price int NOT NULL,
-    InStock bit NOT NULL DEFAULT 1,
+    IsInStock bit NOT NULL DEFAULT 1,
     Popularity int NOT NULL DEFAULT 0,
     /* ska bli foreign key! */
     CategoryId int
@@ -270,13 +270,13 @@ GO
 
 CREATE TABLE StockTransactions
 (
-    Id int IDENTITY(1,1),
+    Id int PRIMARY KEY IDENTITY(1,1),
     /* kan vara null om enbart lagersaldo behöver justeras*/
     OrderId int,
     ProductId int NOT NULL,
     StockChange int,
     AmountReturned int,
-    DateTimeOfTransaction datetime NOT NULL,
+    DateTimeOfTransaction datetime,
     TransactionId int DEFAULT 2
 )
 
