@@ -6,7 +6,10 @@ namespace ElGiganto
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Menu myMenu = new Menu();
+            Product myProduct = new Product();
+            DB myDB = new DB();
+            myMenu.StartMenu(myProduct, myDB);
         }
     }
 }

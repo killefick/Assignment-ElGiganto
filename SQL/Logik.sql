@@ -15,13 +15,14 @@
 /* GetAllProducts */
 CREATE OR ALTER VIEW GetAllProducts
 AS
-    SELECT c.Name Category, p.Name Product, Price, InStock, Popularity
+    SELECT c.Name Category, p.Name Product, Price, IsInStock, Popularity
     FROM Products p
         INNER JOIN Categories c
         ON p.CategoryId = c.Id
 GO
 
-SELECT Category, Product, Price
+
+SELECT Category, Product, Price, IsInStock, Popularity
 FROM GetAllProducts
 GO
 
@@ -30,7 +31,7 @@ GO
 CREATE OR ALTER PROCEDURE GetProductDetails
     (@ProcuctId int)
 AS
-SELECT c.Name Category, p.Name Product, Price, InStock, Popularity
+SELECT c.Name Category, p.Name Product, Price, IsInStock, Popularity
 FROM Products p
     INNER JOIN Categories c
     ON p.CategoryId = c.Id
@@ -43,14 +44,14 @@ GO
 
 /* ListProductsByCategory */
 CREATE OR ALTER PROCEDURE ListProductsByCategory
-    (@InStock int)
+    (@IsInStock int)
 AS
 SELECT c.Name AS Kategori, p.Name Produkt, p.Price Pris, p.Popularity Popularitet
 FROM Products p
     INNER JOIN Categories c ON p.CategoryId = c.Id
 
-WHERE p.InStock = @InStock
-    OR p.InStock = 1
+WHERE p.IsInStock = @IsInStock
+    OR p.IsInStock = 1
 
 GROUP BY c.Name, p.Name, p.Price, p.Popularity
 ORDER BY c.Name, p.Popularity DESC
