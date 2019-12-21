@@ -15,16 +15,18 @@
 /* GetAllProducts */
 CREATE OR ALTER VIEW GetAllProducts
 AS
-    SELECT c.Name Category, p.Name Product, Price, IsInStock, Popularity
+    SELECT c.Name CategoryName, p.Name ProductName, Price, IsInStock, Popularity
     FROM Products p
         INNER JOIN Categories c
         ON p.CategoryId = c.Id
 GO
 
 
-SELECT Category, Product, Price, IsInStock, Popularity
+SELECT CategoryName, ProductName, Price, IsInStock, Popularity
 FROM GetAllProducts
 GO
+SELECT * FROM GetAllProducts
+go
 
 
 /* GetProductDetails & Popularity +1 */
@@ -443,7 +445,7 @@ GO
 CREATE OR ALTER VIEW MostPopular
 AS
     WITH
-        TopPopularProducts (Category, Name, Popularity)
+        TopPopularProducts (CategoryName, ProductName, Popularity)
         AS
         (
             SELECT Categories.Name, Products.Name, Products.Popularity
@@ -452,12 +454,14 @@ AS
             WHERE Products.CategoryId = Categories.Id
         )
     SELECT TopPopularProducts.*,
-        ROW_Number() OVER (PARTITION BY Category ORDER BY Popularity DESC) AS Ranking
+        ROW_Number() OVER (PARTITION BY CategoryName ORDER BY Popularity DESC) AS Ranking
     FROM TopPopularProducts
-    GROUP BY Category, Name, Popularity
+    GROUP BY CategoryName, ProductName, Popularity
 GO
 
-SELECT *
+select * from MostPopular
+
+SELECT CategoryName, ProductName, Popularity, Ranking
 FROM MostPopular
 WHERE Ranking <= 5
 GO

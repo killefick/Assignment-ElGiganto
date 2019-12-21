@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ElGiganto
 {
-    public enum Choice { Quit, GetAllProducts };
+    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory };
 
     class Menu
     {
@@ -13,20 +13,16 @@ namespace ElGiganto
         {
             // default user choice
             int choice = 0;
-            // default result from methods
-            // int result = 0;
 
             while (true)
             {
                 Console.Clear();
                 myProductList.Clear();
-                
+
                 Console.WriteLine(Convert.ToInt32(Choice.GetAllProducts) + ": Visa alla produkter i lagret\n"
-                // + Convert.ToInt32(Choice.CountAllProducts) + ": Visa antal hundar i databas\n"
-                // + Convert.ToInt32(Choice.CountVeterinaryData) + ": Visa antal veterinärdata i databas\n"
-                // + Convert.ToInt32(Choice.GetDogInfo) + ": Visa hundinfo för Hund med Id 9 (Fantasia Li)\n"
-                // + Convert.ToInt32(Choice.GetSyblings) + ": Visa syskonpar\n"
-                // + Convert.ToInt32(Choice.SearchOwner) + ": Leta efter ägare\n"
+                + Convert.ToInt32(Choice.MostPopular) + ": Top 5 produkter per kategori\n"
+                + Convert.ToInt32(Choice.ListProductsByCategory) + ": Produktlista per kategori och sorterat på popularitet\n"
+
                 + Convert.ToInt32(Choice.Quit) + ": Avsluta\n");
 
                 Console.Write("Gör ett val: ");
@@ -47,41 +43,54 @@ namespace ElGiganto
                 {
                     case Choice.GetAllProducts:
                         myProductList = myProduct.GetAllProducts(myProductList, myDB);
-                            Console.WriteLine("Produktnamn \t\t\t Detaljer \t\t\t Pris \t\t\t Popularitet");
+                        Console.WriteLine("Produktkategori\t Produktnamn\t Pris \t  Popularitet");
                         foreach (var product in myProductList)
                         {
-                            Console.WriteLine($"{product.Category} \t\t\t {product.Name} \t\t\t {product.Price}");
+                            Console.WriteLine($"{product.CategoryName}\t {product.ProductName}\t {product.Price}\t {product.Popularity}");
                         }
                         PressAnyKey();
                         break;
 
-                    // case Choice.CountAllProducts:
-                    //     result = myProduct.CountAllProducts();
-                    //     Console.WriteLine("Antal hundar i databas: " + result);
-                    //     PressAnyKey();
+                    case Choice.MostPopular:
+                        Console.Clear();
+                        myProductList = myProduct.MostPopular(myProductList, myDB);
+                        Console.WriteLine("Produktkategori\t Produktnamn\t Popularitet \t  Rangordning");
+                        foreach (var product in myProductList)
+                        {
+                            Console.WriteLine($"{product.CategoryName}\t {product.ProductName}\t {product.Popularity}\t {product.Ranking}");
+                        }
+                        PressAnyKey();
+                        break;
 
-                    //     break;
+                    case Choice.ListProductsByCategory:
+                        Console.Clear();
+                        System.Console.WriteLine("Vill du se [a]lla produkter eller de som finns i [l]ager?");
+                        string userinput = Console.ReadLine();
+                        int input;
+                        switch (userinput)
+                        {
+                            case "a":
+                                input = 1;
+                                break;
 
-                    // case Choice.CountVeterinaryData:
-                    //     result = myProduct.CountVeterinaryData();
-                    //     Console.WriteLine("Antal veterinärdata i databas: " + result);
-                    //     PressAnyKey();
-                    //     break;
+                            case "l":
+                                input = 0;
+                                break;
+                            default:
+                                input = 1;
+                                break;
+                        }
 
-                    // case Choice.GetDogInfo:
-                    //     myProduct.GetDogInfo(9);
-                    //     PressAnyKey();
-                    //     break;
+                        myProductList = myProduct.ListProductsByCategory(myProductList, myDB, input);
+                        Console.WriteLine("Produktnamn\t Pris \t  Rangordning");
+                        foreach (var product in myProductList)
+                        {
+                            Console.WriteLine($"{product.ProductName}\t {product.Price}\t {product.Popularity}");
+                        }
+                        PressAnyKey();
+                        break;
 
-                    // case Choice.GetSyblings:
-                    //     myProduct.GetSyblings();
-                    //     PressAnyKey();
-                    //     break;
 
-                    // case Choice.SearchOwner:
-                    //     O.SearchOwner();
-                    //     PressAnyKey();
-                    //     break;
 
                     case Choice.Quit:
                         return;

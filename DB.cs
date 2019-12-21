@@ -34,6 +34,37 @@ namespace ElGiganto
             }
         }
 
+        public IEnumerable<Product> MostPopularFromDB()
+        {
+            try
+            {
+                // connects to the database
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    return connection.Query<Product>("SELECT CategoryName, ProductName, Popularity, Ranking FROM MostPopular WHERE Ranking <= 5");
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<Product> ListProductsByCategoryFromDB(int input)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    return connection.Query<Product>($"EXEC ListProductsByCategory {input}");
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
         //     public int CountAllProductsDB()
         //     {
         //         try
