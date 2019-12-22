@@ -13,6 +13,8 @@ namespace ElGiganto
         public int Price { get; set; }
         public int Popularity { get; set; }
         public int Ranking { get; set; }
+        public int CartId { get; set; }
+        public int Id { get; set; }
 
         public bool IsInStock { get; set; }
 
@@ -24,7 +26,7 @@ namespace ElGiganto
             }
             return myProductList;
         }
-       
+
         public List<Product> MostPopular(List<Product> myProductList, DB myDB)
         {
             foreach (var product in myDB.MostPopularFromDB())
@@ -41,6 +43,17 @@ namespace ElGiganto
                 myProductList.Add(product);
             }
             return myProductList;
+        }
+
+        public int CreateCart(List<Product> myProductList, DB myDB, int input)
+        {
+            int cartIdOut = 0;
+            foreach (var product in myDB.CreateCart(input))
+            {
+                myProductList.Add(product);
+            }
+            cartIdOut = myProductList[0].CartId;
+            return cartIdOut;
         }
     }
 }

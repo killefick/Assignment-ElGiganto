@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ElGiganto
 {
-    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory };
+    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, CreateCart, InsertIntoCart };
 
     class Menu
     {
@@ -22,6 +22,8 @@ namespace ElGiganto
                 Console.WriteLine(Convert.ToInt32(Choice.GetAllProducts) + ": Visa alla produkter i lagret\n"
                 + Convert.ToInt32(Choice.MostPopular) + ": Top 5 produkter per kategori\n"
                 + Convert.ToInt32(Choice.ListProductsByCategory) + ": Produktlista per kategori och sorterat på popularitet\n"
+                + Convert.ToInt32(Choice.CreateCart) + ": Skapa varukorg\n"
+                + Convert.ToInt32(Choice.InsertIntoCart) + ": Lägg varor i varukorgen\n"
 
                 + Convert.ToInt32(Choice.Quit) + ": Avsluta\n");
 
@@ -92,7 +94,41 @@ namespace ElGiganto
                         PressAnyKey();
                         break;
 
+                    case Choice.CreateCart:
+                        Console.Clear();
+                        Random myRandomNumber = new Random();
+                        input = myRandomNumber.Next(100000, 1000000);
+                        int cartIdOut = myProduct.CreateCart(myProductList, myDB, input);
+                        System.Console.WriteLine($"CartId: {cartIdOut}");
+                        PressAnyKey();
+                        break;
 
+                    case Choice.InsertIntoCart:
+                        myProductList = myProduct.GetAllProducts(myProductList, myDB);
+
+                        while (true)
+                        {
+                            Console.WriteLine("Id \t\t Produktkategori   \t Produktnamn \t\t Pris \t\t  Popularitet");
+                            foreach (var product in myProductList)
+                            {
+                                Console.WriteLine($"{product.Id} \t\t {product.CategoryName}   \t\t {product.ProductName} \t\t\t {product.Price} \t\t {product.Popularity}");
+                            }
+                            System.Console.Write("Vilken produkt ska läggas till varukorgen (ange Id) eller [a]vbryt: ");
+                            userinput = Console.ReadLine().ToLower();
+                            if (userinput == "a")
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                input = Int32.Parse(userinput);
+                            }
+                            System.Console.Write("Ange antal:");
+                            int amount = Int32.Parse(Console.ReadLine());
+                            
+                        }
+                        PressAnyKey();
+                        break;
 
                     case Choice.Quit:
                         return;

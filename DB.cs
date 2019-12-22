@@ -65,6 +65,21 @@ namespace ElGiganto
             }
         }
 
+        public IEnumerable<Product>  CreateCart(int customerId)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    return connection.Query<Product>($"DECLARE @CartIdOut int; EXEC @CartIdOut = CreateCart {customerId}; SELECT @CartIdOut AS CartId");
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
         //     public int CountAllProductsDB()
         //     {
         //         try

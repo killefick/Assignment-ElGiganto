@@ -15,14 +15,14 @@
 /* GetAllProducts */
 CREATE OR ALTER VIEW GetAllProducts
 AS
-    SELECT c.Name CategoryName, p.Name ProductName, Price, IsInStock, Popularity
+    SELECT p.Id, c.Name CategoryName, p.Name ProductName, Price, IsInStock, Popularity
     FROM Products p
         INNER JOIN Categories c
         ON p.CategoryId = c.Id
 GO
 
 
-SELECT CategoryName, ProductName, Price, IsInStock, Popularity
+SELECT Id, CategoryName, ProductName, Price, IsInStock, Popularity
 FROM GetAllProducts
 GO
 SELECT * FROM GetAllProducts
