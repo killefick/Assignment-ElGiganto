@@ -45,6 +45,7 @@ CREATE TABLE Products
     /* ska bli foreign key! */
     CategoryId int
 )
+
 INSERT INTO Products
     (Name, ProductDetails, Price, CategoryId)
 VALUES('M65', 'US Army replika, varm och stryktålig', 999 , 1)

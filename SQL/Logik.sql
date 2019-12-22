@@ -48,7 +48,7 @@ GO
 CREATE OR ALTER PROCEDURE ListProductsByCategory
     (@IsInStock int)
 AS
-SELECT c.Name AS Kategori, p.Name Produkt, p.Price Pris, p.Popularity Popularitet
+SELECT c.Name AS CategoryName, p.Name ProductName, p.Price, p.Popularity
 FROM Products p
     INNER JOIN Categories c ON p.CategoryId = c.Id
 
@@ -59,7 +59,7 @@ GROUP BY c.Name, p.Name, p.Price, p.Popularity
 ORDER BY c.Name, p.Popularity DESC
 GO
 
-EXEC ListProductsByCategory 0
+EXEC ListProductsByCategory 1
 GO
 
 

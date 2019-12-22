@@ -70,18 +70,20 @@ namespace ElGiganto
                         switch (userinput)
                         {
                             case "a":
-                                input = 1;
+                                input = 0;
                                 break;
 
                             case "l":
-                                input = 0;
+                                input = 1;
                                 break;
                             default:
-                                input = 1;
+                                input = 0;
                                 break;
                         }
 
                         myProductList = myProduct.ListProductsByCategory(myProductList, myDB, input);
+
+                        Console.WriteLine("Antal produkter: " + myProductList.Count);
                         Console.WriteLine("Produktnamn\t Pris \t  Rangordning");
                         foreach (var product in myProductList)
                         {
