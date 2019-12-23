@@ -9,6 +9,7 @@ namespace ElGiganto
         public string CategoryName { get; set; }
         public string ProductDetails { get; set; }
 
+        public int OrderNumber { get; set; }
         public int CustomerId { get; set; }
         public int CustomerNumber { get; set; }
         public int CategoryId { get; set; }
@@ -58,5 +59,6 @@ namespace ElGiganto
             cartIdOut = myProductList[0].CartId;
             return cartIdOut;
         }
+
     }
 }

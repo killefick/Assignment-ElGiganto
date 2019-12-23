@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ElGiganto
 {
-    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, CreateCart, InsertIntoCart, ShowCart, PlaceOrder };
+    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, InsertIntoCart, ShowCart, PlaceOrder };
 
     class Menu
     {
@@ -18,7 +18,9 @@ namespace ElGiganto
             Random myRandomNumber = new Random();
             int customerNumber = myRandomNumber.Next(100000, 1000000);
             myDB.CreateCustomer(customerNumber);
-            
+            cartIdOut = myProduct.CreateCart(myProductListFromDB, myDB, customerNumber);
+
+
             while (true)
             {
                 Console.Clear();
@@ -30,7 +32,6 @@ namespace ElGiganto
                 Console.WriteLine(Convert.ToInt32(Choice.GetAllProducts) + ": Visa alla produkter i lagret\n"
                 + Convert.ToInt32(Choice.MostPopular) + ": Top 5 produkter per kategori\n"
                 + Convert.ToInt32(Choice.ListProductsByCategory) + ": Produktlista per kategori och sorterat på popularitet\n"
-                + Convert.ToInt32(Choice.CreateCart) + ": Skapa varukorg\n"
                 + Convert.ToInt32(Choice.InsertIntoCart) + ": Lägg varor i varukorgen\n"
                 + Convert.ToInt32(Choice.ShowCart) + ": Visa varukorgen\n"
                 + Convert.ToInt32(Choice.PlaceOrder) + ": Lägg order\n"
@@ -105,12 +106,12 @@ namespace ElGiganto
                         PressAnyKey();
                         break;
 
-                    case Choice.CreateCart:
-                        Console.Clear();
-                        cartIdOut = myProduct.CreateCart(myProductListFromDB, myDB, customerNumber);
-                        System.Console.WriteLine("Varukorg skapad.");
-                        PressAnyKey();
-                        break;
+                    // case Choice.CreateCart:
+                    //     Console.Clear();
+                    //     cartIdOut = myProduct.CreateCart(myProductListFromDB, myDB, customerNumber);
+                    //     System.Console.WriteLine("Varukorg skapad.");
+                    //     PressAnyKey();
+                    //     break;
 
                     case Choice.InsertIntoCart:
                         myProductListFromDB = myProduct.GetAllProducts(myProductListFromDB, myDB);
@@ -157,9 +158,9 @@ namespace ElGiganto
                         {
                             myDB.InsertIntoCart(cartIdOut, product.Id, product.Amount);
                         }
-                       myDB.CheckOutCart(customerId, cartId);
-
-
+                        myDB.CheckOutCart(customerNumber, cartIdOut);
+                        int orderNumber = myProduct.OrderNumber;
+                        System.Console.WriteLine("Tack för din order! Ditt ordernummer är " + orderNumber + ".");
                         Console.ReadLine();
                         break;
 
@@ -176,7 +177,7 @@ namespace ElGiganto
             }
         }
 
-      
+
 
         public void PressAnyKey()
         {

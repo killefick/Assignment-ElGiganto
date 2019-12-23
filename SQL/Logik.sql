@@ -101,7 +101,8 @@ END
 DECLARE @CartIdOut int;
 EXEC @CartIdOut = CreateCart 123456
 SELECT @CartIdOut AS CartId
-select * from Customers
+SELECT *
+FROM Customers
 SELECT *
 FROM Carts
 GO
@@ -195,19 +196,77 @@ GO
 
 
 /* Checkout cart */
+-- CREATE OR ALTER PROCEDURE CheckoutCart
+--     (@CustomerId int,
+--     @CartId int,
+--     @OrderNumberToCustomer int output)
+-- AS
+-- BEGIN
+--     -- create order and insert customer id
+--     DECLARE @OrderId int
+--     INSERT INTO Orders
+--         (CustomerId)
+--     VALUES
+--         (@CustomerId)
+
+--     SET @OrderId = SCOPE_IDENTITY()
+
+--     --generate random order number
+--     SET @OrderNumberToCustomer = FLOOR(RAND()*(99999999-10000000+1))+10000000;
+
+--     -- update customer details
+--     UPDATE Orders
+--     SET 
+--         Orders.CustomerName = c.CustomerName,
+--         Orders.CustomerStreet = c.CustomerStreet,
+--         Orders.CustomerZip = c.CustomerZip,
+--         Orders.CustomerCity = c.CustomerCity
+--     FROM Orders o
+--         INNER JOIN Customers c ON o.CustomerId = c.Id
+--     WHERE o.CustomerId = @CustomerId
+
+--     -- move products from cart
+--     INSERT INTO Products_Order
+--         (OrderId, ProductId, Amount)
+--     SELECT @OrderId, Products_Cart.ProductId, Products_Cart.Amount
+--     FROM Products_Cart
+--     WHERE Products_Cart.CartId = @CartId
+
+--     -- reserve products in warehouse
+--     UPDATE Warehouse
+--     SET Warehouse.Reserved = po.Amount
+--     FROM Products_Order po
+--     WHERE Warehouse.ProductId = po.ProductId
+--         AND po.Id = @OrderId
+
+--     -- empty cart
+--     DELETE FROM Products_Cart
+--     WHERE Products_Cart.CartId = @CartId
+-- END
+--     GO
+
+SELECT *
+FROM Orders
+GO
+
+SELECT *
+FROM Customers
+GO
+
 CREATE OR ALTER PROCEDURE CheckoutCart
-    (@CustomerId int,
+    (@CustomerNumber int,
     @CartId int,
     @OrderNumberToCustomer int output)
 AS
 BEGIN
     -- create order and insert customer id
     DECLARE @OrderId int
+
     INSERT INTO Orders
         (CustomerId)
-    VALUES
-        (@CustomerId)
-
+    SELECT Customers.Id
+    FROM Customers
+    WHERE @customerNumber = Customers.CustomerNumber
     SET @OrderId = SCOPE_IDENTITY()
 
     --generate random order number
@@ -222,7 +281,7 @@ BEGIN
         Orders.CustomerCity = c.CustomerCity
     FROM Orders o
         INNER JOIN Customers c ON o.CustomerId = c.Id
-    WHERE o.CustomerId = @CustomerId
+    WHERE o.CustomerId = c.Id
 
     -- move products from cart
     INSERT INTO Products_Order
@@ -244,7 +303,6 @@ BEGIN
 END
     GO
 
-
 DECLARE @CartIdOut int;
 EXEC @CartIdOut = CreateCart 4
 SELECT @CartIdOut AS CartId
@@ -259,6 +317,9 @@ FROM carts
 EXEC getcart 11
 GO
 
+
+SELECT *
+FROM Products_Order
 
 SELECT *
 FROM Products_Cart

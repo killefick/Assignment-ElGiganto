@@ -208,7 +208,7 @@ GO
 CREATE TABLE Carts
 (
     Id int PRIMARY KEY IDENTITY(1,1),
-    CustomerId int UNIQUE REFERENCES Customers(Id),
+    CustomerId int REFERENCES Customers(Id),
     DateTimeCreated datetime DEFAULT GETDATE()
 )
 
