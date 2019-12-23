@@ -9,12 +9,14 @@ namespace ElGiganto
         public string CategoryName { get; set; }
         public string ProductDetails { get; set; }
 
+        public int CustomerId { get; set; }
         public int CategoryId { get; set; }
         public int Price { get; set; }
         public int Popularity { get; set; }
         public int Ranking { get; set; }
         public int CartId { get; set; }
         public int Id { get; set; }
+        public int Amount { get; set; }
 
         public bool IsInStock { get; set; }
 
@@ -45,10 +47,10 @@ namespace ElGiganto
             return myProductList;
         }
 
-        public int CreateCart(List<Product> myProductList, DB myDB, int input)
+        public int CreateCart(List<Product> myProductList, DB myDB, int customerNumber)
         {
             int cartIdOut = 0;
-            foreach (var product in myDB.CreateCart(input))
+            foreach (var product in myDB.CreateCartOnDB(customerNumber))
             {
                 myProductList.Add(product);
             }

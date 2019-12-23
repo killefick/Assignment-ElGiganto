@@ -3,21 +3,27 @@ using System.Collections.Generic;
 
 namespace ElGiganto
 {
-    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, CreateCart, InsertIntoCart };
+    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, CreateCart, InsertIntoCart, ShowCart };
 
     class Menu
     {
-        List<Product> myProductList = new List<Product>();
+        List<Product> myProductListFromDB = new List<Product>();
+        List<Product> myCart = new List<Product>();
 
         public void StartMenu(Product myProduct, DB myDB)
         {
             // default user choice
             int choice = 0;
-
+            int cartIdOut = 0;
+            Random myRandomNumber = new Random();
+            int customerId = myRandomNumber.Next(100000, 1000000);
             while (true)
             {
                 Console.Clear();
-                myProductList.Clear();
+                myProductListFromDB.Clear();
+
+                System.Console.WriteLine($"Kundnummer: {customerId}");
+                System.Console.WriteLine($"CartId: {cartIdOut}");
 
                 Console.WriteLine(Convert.ToInt32(Choice.GetAllProducts) + ": Visa alla produkter i lagret\n"
                 + Convert.ToInt32(Choice.MostPopular) + ": Top 5 produkter per kategori\n"
@@ -31,7 +37,7 @@ namespace ElGiganto
 
                 try
                 {
-                    choice = TryToConvertToInt(Console.ReadLine());
+
                 }
                 catch
                 {
@@ -44,9 +50,10 @@ namespace ElGiganto
                 switch (enumIndex)
                 {
                     case Choice.GetAllProducts:
-                        myProductList = myProduct.GetAllProducts(myProductList, myDB);
+                        Console.Clear();
+                        myProductListFromDB = myProduct.GetAllProducts(myProductListFromDB, myDB);
                         Console.WriteLine("Produktkategori\t Produktnamn\t Pris \t  Popularitet");
-                        foreach (var product in myProductList)
+                        foreach (var product in myProductListFromDB)
                         {
                             Console.WriteLine($"{product.CategoryName}\t {product.ProductName}\t {product.Price}\t {product.Popularity}");
                         }
@@ -55,9 +62,9 @@ namespace ElGiganto
 
                     case Choice.MostPopular:
                         Console.Clear();
-                        myProductList = myProduct.MostPopular(myProductList, myDB);
+                        myProductListFromDB = myProduct.MostPopular(myProductListFromDB, myDB);
                         Console.WriteLine("Produktkategori\t Produktnamn\t Popularitet \t  Rangordning");
-                        foreach (var product in myProductList)
+                        foreach (var product in myProductListFromDB)
                         {
                             Console.WriteLine($"{product.CategoryName}\t {product.ProductName}\t {product.Popularity}\t {product.Ranking}");
                         }
@@ -83,11 +90,11 @@ namespace ElGiganto
                                 break;
                         }
 
-                        myProductList = myProduct.ListProductsByCategory(myProductList, myDB, input);
+                        myProductListFromDB = myProduct.ListProductsByCategory(myProductListFromDB, myDB, input);
 
-                        Console.WriteLine("Antal produkter: " + myProductList.Count);
+                        Console.WriteLine("Antal produkter: " + myProductListFromDB.Count);
                         Console.WriteLine("Produktnamn\t Pris \t  Rangordning");
-                        foreach (var product in myProductList)
+                        foreach (var product in myProductListFromDB)
                         {
                             Console.WriteLine($"{product.ProductName}\t {product.Price}\t {product.Popularity}");
                         }
@@ -96,20 +103,22 @@ namespace ElGiganto
 
                     case Choice.CreateCart:
                         Console.Clear();
-                        Random myRandomNumber = new Random();
-                        input = myRandomNumber.Next(100000, 1000000);
-                        int cartIdOut = myProduct.CreateCart(myProductList, myDB, input);
-                        System.Console.WriteLine($"CartId: {cartIdOut}");
+                        cartIdOut = myProduct.CreateCart(myProductListFromDB, myDB, customerId);
+                        System.Console.WriteLine("Varukorg skapad.");
                         PressAnyKey();
                         break;
 
                     case Choice.InsertIntoCart:
-                        myProductList = myProduct.GetAllProducts(myProductList, myDB);
+                        Console.Clear();
 
+                        Product tempProduct = new Product();
+
+                        myProductListFromDB = myProduct.GetAllProducts(myProductListFromDB, myDB);
                         while (true)
                         {
+                            int productId = 0;
                             Console.WriteLine("Id \t\t Produktkategori   \t Produktnamn \t\t Pris \t\t  Popularitet");
-                            foreach (var product in myProductList)
+                            foreach (var product in myProductListFromDB)
                             {
                                 Console.WriteLine($"{product.Id} \t\t {product.CategoryName}   \t\t {product.ProductName} \t\t\t {product.Price} \t\t {product.Popularity}");
                             }
@@ -121,13 +130,25 @@ namespace ElGiganto
                             }
                             else
                             {
-                                input = Int32.Parse(userinput);
+                                productId = Int32.Parse(userinput);
                             }
-                            System.Console.Write("Ange antal:");
+                            System.Console.Write("Ange antal: ");
                             int amount = Int32.Parse(Console.ReadLine());
-                            
+
+                            tempProduct.Id = productId;
+                            tempProduct.Amount = amount;
+                            myCart.Add(tempProduct);
+                            tempProduct = null;
+
+                            // myDB.InsertIntoCart(cartIdOut, productId, amount);
                         }
-                        PressAnyKey();
+                        break;
+
+                    case Choice.ShowCart:
+                        foreach (var product in myCart)
+                        {
+                            System.Console.WriteLine(product.Id + product.Amount);
+                        }
                         break;
 
                     case Choice.Quit:
@@ -142,6 +163,8 @@ namespace ElGiganto
                 }
             }
         }
+
+
 
         public void PressAnyKey()
         {

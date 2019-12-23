@@ -65,7 +65,7 @@ namespace ElGiganto
             }
         }
 
-        public IEnumerable<Product>  CreateCart(int customerId)
+        public IEnumerable<Product> CreateCartOnDB(int customerId)
         {
             try
             {
@@ -78,6 +78,16 @@ namespace ElGiganto
             {
                 throw;
             }
+        }
+
+        public void InsertIntoCart(int cartIdOut, int productId, int amount)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Query($"EXEC InsertIntoCart  {cartIdOut}, {productId}, {amount}");
+            }
+
+
         }
 
         //     public int CountAllProductsDB()
