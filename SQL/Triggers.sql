@@ -74,7 +74,3 @@ BEGIN
 	WHERE Warehouse.Id = inserted.Id
 END
 GO
-
-SELECT *
-FROM Warehouse
-GO

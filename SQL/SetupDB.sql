@@ -115,7 +115,7 @@ GO
 CREATE TABLE Warehouse
 (
     Id int PRIMARY KEY IDENTITY(1,1),
-    ProductId int NOT NULL,
+    ProductId int NOT NULL REFERENCES Products(Id),
     InStock int NOT NULL DEFAULT 0,
     Reserved int NOT NULL DEFAULT 0,
     Available int
@@ -244,11 +244,12 @@ CREATE TABLE Products_Order
 /* Customers */
 DROP TABLE Customers
 GO
-
+ 
 CREATE TABLE Customers
 (
     Id int PRIMARY KEY IDENTITY(1,1),
     CustomerName varchar(100),
+    CustomerNumber int UNIQUE,
     CustomerStreet varchar(100),
     CustomerZip varchar(10),
     CustomerCity varchar(50),

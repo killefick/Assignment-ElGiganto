@@ -16,13 +16,15 @@ namespace ElGiganto
             int choice = 0;
             int cartIdOut = 0;
             Random myRandomNumber = new Random();
-            int customerId = myRandomNumber.Next(100000, 1000000);
+            int customerNumber = myRandomNumber.Next(100000, 1000000);
+            myDB.CreateCustomer(customerNumber);
+            
             while (true)
             {
                 Console.Clear();
                 myProductListFromDB.Clear();
 
-                System.Console.WriteLine($"Kundnummer: {customerId}");
+                System.Console.WriteLine($"Kundnummer: {customerNumber}");
                 System.Console.WriteLine($"CartId: {cartIdOut}");
 
                 Console.WriteLine(Convert.ToInt32(Choice.GetAllProducts) + ": Visa alla produkter i lagret\n"
@@ -105,7 +107,7 @@ namespace ElGiganto
 
                     case Choice.CreateCart:
                         Console.Clear();
-                        cartIdOut = myProduct.CreateCart(myProductListFromDB, myDB, customerId);
+                        cartIdOut = myProduct.CreateCart(myProductListFromDB, myDB, customerNumber);
                         System.Console.WriteLine("Varukorg skapad.");
                         PressAnyKey();
                         break;
@@ -155,6 +157,9 @@ namespace ElGiganto
                         {
                             myDB.InsertIntoCart(cartIdOut, product.Id, product.Amount);
                         }
+                       myDB.CheckOutCart(customerId, cartId);
+
+
                         Console.ReadLine();
                         break;
 
@@ -170,6 +175,8 @@ namespace ElGiganto
                 }
             }
         }
+
+      
 
         public void PressAnyKey()
         {

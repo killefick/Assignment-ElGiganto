@@ -10,6 +10,7 @@ namespace ElGiganto
         public string ProductDetails { get; set; }
 
         public int CustomerId { get; set; }
+        public int CustomerNumber { get; set; }
         public int CategoryId { get; set; }
         public int Price { get; set; }
         public int Popularity { get; set; }

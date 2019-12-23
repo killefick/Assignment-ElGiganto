@@ -34,6 +34,21 @@ namespace ElGiganto
             }
         }
 
+        public dynamic CreateCustomer(int customerNumber)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    return connection.Query<dynamic>($"EXEC CreateCustomer {customerNumber} ");
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
         public IEnumerable<Product> MostPopularFromDB()
         {
             try
@@ -65,13 +80,13 @@ namespace ElGiganto
             }
         }
 
-        public IEnumerable<Product> CreateCartOnDB(int customerId)
+        public IEnumerable<Product> CreateCartOnDB(int customerNumber)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    return connection.Query<Product>($"DECLARE @CartIdOut int; EXEC @CartIdOut = CreateCart {customerId}; SELECT @CartIdOut AS CartId");
+                    return connection.Query<Product>($"DECLARE @CartIdOut int; EXEC @CartIdOut = CreateCart {customerNumber}; SELECT @CartIdOut AS CartId");
                 }
             }
             catch (System.Exception)
@@ -93,7 +108,22 @@ namespace ElGiganto
             {
                 throw;
             }
+        }
 
+
+        public IEnumerable<Product> CheckOutCart(int customerId, int cartId)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    return connection.Query<Product>($"DECLARE @orderno int; EXEC CheckoutCart {customerId}, {cartId}, @OrderNumberToCustomer = @orderno; SELECT @orderno");
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
         }
 
         //     public int CountAllProductsDB()

@@ -25,8 +25,9 @@ GO
 SELECT Id, CategoryName, ProductName, Price, IsInStock, Popularity
 FROM GetAllProducts
 GO
-SELECT * FROM GetAllProducts
-go
+SELECT *
+FROM GetAllProducts
+GO
 
 
 /* GetProductDetails & Popularity +1 */
@@ -62,25 +63,49 @@ GO
 EXEC ListProductsByCategory 1
 GO
 
+CREATE OR ALTER PROCEDURE CreateCustomer
+    @CustomerNumber int
+AS
+BEGIN
+    INSERT INTO Customers
+        (CustomerNumber)
+    VALUES
+        (@CustomerNumber)
+END
+    GO
+SELECT *
+FROM Customers
+GO
+
+
+-- INSERT INTO TableA(colA, colB, colC)
+--   SELECT TableX.valA, TableY.valB, TableZ.valC
+--     FROM TableX
+--    INNER JOIN TableY ON :......
+
 
 /* CreateCart & Return CartId */
 CREATE OR ALTER PROCEDURE CreateCart
-    @CustomerId int
+    @customerNumber int
 AS
 BEGIN
     INSERT INTO Carts
         (CustomerId)
-    VALUES
-        (@CustomerId)
+    SELECT Customers.Id
+    FROM Customers
+    WHERE @customerNumber = Customers.CustomerNumber
     RETURN SCOPE_IDENTITY()
 END
     GO
 
-
 DECLARE @CartIdOut int;
-EXEC @CartIdOut = CreateCart 2
+EXEC @CartIdOut = CreateCart 123456
 SELECT @CartIdOut AS CartId
+select * from Customers
+SELECT *
+FROM Carts
 GO
+
 
 
 /* Delete carts older than 14 days */
@@ -140,9 +165,11 @@ FROM Products_Cart
 WHERE CartId = 1
 GO
 
-select * from Products_Cart
-select * from Products_Order
-go
+SELECT *
+FROM Products_Cart
+SELECT *
+FROM Products_Order
+GO
 
 /* GetCart */
 CREATE OR ALTER PROCEDURE GetCart
@@ -462,7 +489,8 @@ AS
     GROUP BY CategoryName, ProductName, Popularity
 GO
 
-select * from MostPopular
+SELECT *
+FROM MostPopular
 
 SELECT CategoryName, ProductName, Popularity, Ranking
 FROM MostPopular
@@ -491,7 +519,7 @@ GO
 SELECT TOP 5
     *
 FROM TopReturnedProducts
-go
+GO
 /* Kategorirapport */
 
 -- (en rad per kategori)
@@ -505,13 +533,13 @@ go
 -- CREATE OR ALTER VIEW SoldLast365Days
 -- AS
 --     (
-    SELECT c.Name as Kategori, st.StockChange AS Saldoändring
-    FROM Stocktransactions st
-        INNER JOIN Products p ON p.Id = st.ProductId
-        INNER JOIN Categories c ON p.CategoryId = c.Id
-    WHERE st.DateTimeOfTransaction > (GETDATE() - 365)
-        AND st.transactionid = 1
-        GROUP by c.Name, st.StockChange
+SELECT c.Name AS Kategori, st.StockChange AS Saldoändring
+FROM Stocktransactions st
+    INNER JOIN Products p ON p.Id = st.ProductId
+    INNER JOIN Categories c ON p.CategoryId = c.Id
+WHERE st.DateTimeOfTransaction > (GETDATE() - 365)
+    AND st.transactionid = 1
+GROUP BY c.Name, st.StockChange
 -- )
 GO
 
