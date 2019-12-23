@@ -4,7 +4,7 @@ GO
 
 CREATE TABLE Categories
 (
-    Id int IDENTITY(1,1),
+    Id int PRIMARY KEY IDENTITY(1,1),
     Name varchar(50) NOT NULL UNIQUE
 )
 
@@ -30,20 +30,21 @@ VALUES
     ('Trosor')
 GO
 
+
 /* Products */
 DROP TABLE Products
 GO
 
 CREATE TABLE Products
 (
-    Id int IDENTITY(1,1),
+    Id int PRIMARY KEY IDENTITY(1,1),
     Name varchar(50) NOT NULL,
     ProductDetails varchar(250),
     Price int NOT NULL,
     IsInStock bit NOT NULL DEFAULT 1,
     Popularity int NOT NULL DEFAULT 0,
     /* ska bli foreign key! */
-    CategoryId int
+    CategoryId int REFERENCES Categories(Id)
 )
 
 INSERT INTO Products
@@ -113,7 +114,7 @@ GO
 
 CREATE TABLE Warehouse
 (
-    Id int IDENTITY(1,1),
+    Id int PRIMARY KEY IDENTITY(1,1),
     ProductId int NOT NULL,
     InStock int NOT NULL DEFAULT 0,
     Reserved int NOT NULL DEFAULT 0,
@@ -188,9 +189,9 @@ GO
 
 CREATE TABLE Products_Cart
 (
-    Id int IDENTITY(1,1),
-    CartId int NOT NULL,
-    ProductId int NOT NULL,
+    Id int PRIMARY KEY IDENTITY(1,1),
+    CartId int NOT NULL REFERENCES Carts(Id),
+    ProductId int NOT NULL REFERENCES Products(Id),
     Amount int NOT NULL,
     Sum int
 )
@@ -206,8 +207,8 @@ GO
 
 CREATE TABLE Carts
 (
-    Id int IDENTITY(1,1),
-    CustomerId int UNIQUE,
+    Id int PRIMARY KEY IDENTITY(1,1),
+    CustomerId int UNIQUE REFERENCES Customers(Id),
     DateTimeCreated datetime DEFAULT GETDATE()
 )
 
@@ -217,8 +218,8 @@ GO
 
 CREATE TABLE Orders
 (
-    Id int IDENTITY(1,1),
-    CustomerId int,
+    Id int PRIMARY KEY IDENTITY(1,1),
+    CustomerId int REFERENCES Customers(Id),
     CustomerName varchar(100),
     CustomerStreet varchar(100),
     CustomerZip varchar(10),
@@ -232,9 +233,9 @@ GO
 
 CREATE TABLE Products_Order
 (
-    Id int IDENTITY(1,1),
-    OrderId int,
-    ProductId int,
+    Id int PRIMARY KEY IDENTITY(1,1),
+    OrderId int REFERENCES Orders(Id),
+    ProductId int REFERENCES Products(Id),
     Amount int,
     Sum int,
     AmountReturned int NOT NULL DEFAULT 0,
@@ -246,7 +247,7 @@ GO
 
 CREATE TABLE Customers
 (
-    Id int IDENTITY(1,1),
+    Id int PRIMARY KEY IDENTITY(1,1),
     CustomerName varchar(100),
     CustomerStreet varchar(100),
     CustomerZip varchar(10),
@@ -274,11 +275,11 @@ CREATE TABLE StockTransactions
     Id int PRIMARY KEY IDENTITY(1,1),
     /* kan vara null om enbart lagersaldo behöver justeras*/
     OrderId int,
-    ProductId int NOT NULL,
+    ProductId int NOT NULL REFERENCES Products(Id),
     StockChange int,
     AmountReturned int,
     DateTimeOfTransaction datetime,
-    TransactionId int DEFAULT 2
+    TransactionId int DEFAULT 2 REFERENCES Transactions(Id)
 )
 
 /* Transactions */
@@ -287,7 +288,7 @@ GO
 
 CREATE TABLE Transactions
 (
-    Id int IDENTITY(1,1),
+    Id int PRIMARY KEY IDENTITY(1,1),
     Name varchar(30)
 )
 GO
@@ -304,4 +305,3 @@ INSERT INTO Transactions
     (Name)
 VALUES
     ('Retur')
-    

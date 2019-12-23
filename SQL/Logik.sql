@@ -140,6 +140,9 @@ FROM Products_Cart
 WHERE CartId = 1
 GO
 
+select * from Products_Cart
+select * from Products_Order
+go
 
 /* GetCart */
 CREATE OR ALTER PROCEDURE GetCart

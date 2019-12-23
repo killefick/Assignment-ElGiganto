@@ -82,11 +82,17 @@ namespace ElGiganto
 
         public void InsertIntoCart(int cartIdOut, int productId, int amount)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                connection.Query($"EXEC InsertIntoCart  {cartIdOut}, {productId}, {amount}");
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Query($"EXEC InsertIntoCart  {cartIdOut}, {productId}, {amount}");
+                }
             }
-
+            catch (System.Exception)
+            {
+                throw;
+            }
 
         }
 

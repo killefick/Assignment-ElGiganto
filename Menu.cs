@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ElGiganto
 {
-    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, CreateCart, InsertIntoCart, ShowCart };
+    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, CreateCart, InsertIntoCart, ShowCart, PlaceOrder };
 
     class Menu
     {
@@ -30,6 +30,8 @@ namespace ElGiganto
                 + Convert.ToInt32(Choice.ListProductsByCategory) + ": Produktlista per kategori och sorterat på popularitet\n"
                 + Convert.ToInt32(Choice.CreateCart) + ": Skapa varukorg\n"
                 + Convert.ToInt32(Choice.InsertIntoCart) + ": Lägg varor i varukorgen\n"
+                + Convert.ToInt32(Choice.ShowCart) + ": Visa varukorgen\n"
+                + Convert.ToInt32(Choice.PlaceOrder) + ": Lägg order\n"
 
                 + Convert.ToInt32(Choice.Quit) + ": Avsluta\n");
 
@@ -37,7 +39,7 @@ namespace ElGiganto
 
                 try
                 {
-
+                    choice = TryToConvertToInt(Console.ReadLine());
                 }
                 catch
                 {
@@ -109,13 +111,11 @@ namespace ElGiganto
                         break;
 
                     case Choice.InsertIntoCart:
-                        Console.Clear();
-
-                        Product tempProduct = new Product();
-
                         myProductListFromDB = myProduct.GetAllProducts(myProductListFromDB, myDB);
                         while (true)
                         {
+                            Product tempProduct = new Product();
+                            Console.Clear();
                             int productId = 0;
                             Console.WriteLine("Id \t\t Produktkategori   \t Produktnamn \t\t Pris \t\t  Popularitet");
                             foreach (var product in myProductListFromDB)
@@ -139,16 +139,23 @@ namespace ElGiganto
                             tempProduct.Amount = amount;
                             myCart.Add(tempProduct);
                             tempProduct = null;
-
-                            // myDB.InsertIntoCart(cartIdOut, productId, amount);
                         }
                         break;
 
                     case Choice.ShowCart:
                         foreach (var product in myCart)
                         {
-                            System.Console.WriteLine(product.Id + product.Amount);
+                            System.Console.WriteLine("Produkt Id " + product.Id + " Antal: " + product.Amount);
                         }
+                        Console.ReadLine();
+                        break;
+
+                    case Choice.PlaceOrder:
+                        foreach (var product in myCart)
+                        {
+                            myDB.InsertIntoCart(cartIdOut, product.Id, product.Amount);
+                        }
+                        Console.ReadLine();
                         break;
 
                     case Choice.Quit:
@@ -163,8 +170,6 @@ namespace ElGiganto
                 }
             }
         }
-
-
 
         public void PressAnyKey()
         {
