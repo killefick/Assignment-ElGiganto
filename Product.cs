@@ -60,5 +60,17 @@ namespace ElGiganto
             return cartIdOut;
         }
 
+        public int CheckOutCart(List<Product> myProductList, DB myDB, int customerNumber, int cartIdOut)
+        {
+            int OrderNumber = 0;
+
+            foreach (var product in myDB.CheckOutCartOnDB(customerNumber, cartIdOut))
+            {
+                myProductList.Add(product);
+            }
+            OrderNumber = myProductList[0].OrderNumber;
+            return OrderNumber;
+        }
+
     }
 }

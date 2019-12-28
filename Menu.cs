@@ -106,12 +106,6 @@ namespace ElGiganto
                         PressAnyKey();
                         break;
 
-                    // case Choice.CreateCart:
-                    //     Console.Clear();
-                    //     cartIdOut = myProduct.CreateCart(myProductListFromDB, myDB, customerNumber);
-                    //     System.Console.WriteLine("Varukorg skapad.");
-                    //     PressAnyKey();
-                    //     break;
 
                     case Choice.InsertIntoCart:
                         myProductListFromDB = myProduct.GetAllProducts(myProductListFromDB, myDB);
@@ -120,10 +114,10 @@ namespace ElGiganto
                             Product tempProduct = new Product();
                             Console.Clear();
                             int productId = 0;
-                            Console.WriteLine("Id \t\t Produktkategori   \t Produktnamn \t\t Pris \t\t  Popularitet");
+                            Console.WriteLine("Id \t\t Produktkategori   \t Produktnamn \t\t\t      Pris \t\t  Popularitet");
                             foreach (var product in myProductListFromDB)
                             {
-                                Console.WriteLine($"{product.Id} \t\t {product.CategoryName}   \t\t {product.ProductName} \t\t\t {product.Price} \t\t {product.Popularity}");
+                                Console.WriteLine($"{product.Id} \t\t {product.CategoryName}   \t\t {product.ProductName} \t\t\t      {product.Price} \t\t {product.Popularity}");
                             }
                             System.Console.Write("Vilken produkt ska läggas till varukorgen (ange Id) eller [a]vbryt: ");
                             userinput = Console.ReadLine().ToLower();
@@ -158,7 +152,7 @@ namespace ElGiganto
                         {
                             myDB.InsertIntoCart(cartIdOut, product.Id, product.Amount);
                         }
-                        myDB.CheckOutCart(customerNumber, cartIdOut);
+                        myProduct.CheckOutCart(myProductListFromDB, myDB, customerNumber, cartIdOut);
                         int orderNumber = myProduct.OrderNumber;
                         System.Console.WriteLine("Tack för din order! Ditt ordernummer är " + orderNumber + ".");
                         Console.ReadLine();

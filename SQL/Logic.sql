@@ -22,7 +22,7 @@ AS
 GO
 
 
-SELECT Id, CategoryName, ProductName, Price, IsInStock, Popularity
+SELECT ProductName, Popularity
 FROM GetAllProducts
 GO
 SELECT *
@@ -76,12 +76,6 @@ END
 SELECT *
 FROM Customers
 GO
-
-
--- INSERT INTO TableA(colA, colB, colC)
---   SELECT TableX.valA, TableY.valB, TableZ.valC
---     FROM TableX
---    INNER JOIN TableY ON :......
 
 
 /* CreateCart & Return CartId */
@@ -186,73 +180,12 @@ END
 
 EXEC GetCart 1
 
-SELECT *
-FROM Products_Cart
-GO
-
-SELECT *
-FROM Carts
-GO
-
-
-/* Checkout cart */
--- CREATE OR ALTER PROCEDURE CheckoutCart
---     (@CustomerId int,
---     @CartId int,
---     @OrderNumberToCustomer int output)
--- AS
--- BEGIN
---     -- create order and insert customer id
---     DECLARE @OrderId int
---     INSERT INTO Orders
---         (CustomerId)
---     VALUES
---         (@CustomerId)
-
---     SET @OrderId = SCOPE_IDENTITY()
-
---     --generate random order number
---     SET @OrderNumberToCustomer = FLOOR(RAND()*(99999999-10000000+1))+10000000;
-
---     -- update customer details
---     UPDATE Orders
---     SET 
---         Orders.CustomerName = c.CustomerName,
---         Orders.CustomerStreet = c.CustomerStreet,
---         Orders.CustomerZip = c.CustomerZip,
---         Orders.CustomerCity = c.CustomerCity
---     FROM Orders o
---         INNER JOIN Customers c ON o.CustomerId = c.Id
---     WHERE o.CustomerId = @CustomerId
-
---     -- move products from cart
---     INSERT INTO Products_Order
---         (OrderId, ProductId, Amount)
---     SELECT @OrderId, Products_Cart.ProductId, Products_Cart.Amount
---     FROM Products_Cart
---     WHERE Products_Cart.CartId = @CartId
-
---     -- reserve products in warehouse
---     UPDATE Warehouse
---     SET Warehouse.Reserved = po.Amount
---     FROM Products_Order po
---     WHERE Warehouse.ProductId = po.ProductId
---         AND po.Id = @OrderId
-
---     -- empty cart
---     DELETE FROM Products_Cart
---     WHERE Products_Cart.CartId = @CartId
--- END
---     GO
-
-SELECT *
-FROM Orders
-GO
 
 SELECT *
 FROM Customers
 GO
 
+/* CheckoutCart */
 CREATE OR ALTER PROCEDURE CheckoutCart
     (@CustomerNumber int,
     @CartId int,
@@ -266,11 +199,8 @@ BEGIN
         (CustomerId)
     SELECT Customers.Id
     FROM Customers
-    WHERE @customerNumber = Customers.CustomerNumber
+    WHERE @CustomerNumber = Customers.CustomerNumber
     SET @OrderId = SCOPE_IDENTITY()
-
-    --generate random order number
-    SET @OrderNumberToCustomer = FLOOR(RAND()*(99999999-10000000+1))+10000000;
 
     -- update customer details
     UPDATE Orders
@@ -295,34 +225,20 @@ BEGIN
     SET Warehouse.Reserved = po.Amount
     FROM Products_Order po
     WHERE Warehouse.ProductId = po.ProductId
-        AND po.Id = @OrderId
+        AND po.OrderId = @OrderId
+
+    --generate random order number
+    SET @OrderNumberToCustomer = FLOOR(RAND()*(99999999-10000000+1))+10000000;
 
     -- empty cart
     DELETE FROM Products_Cart
     WHERE Products_Cart.CartId = @CartId
+    
+    RETURN @OrderNumberToCustomer
 END
     GO
 
-DECLARE @CartIdOut int;
-EXEC @CartIdOut = CreateCart 4
-SELECT @CartIdOut AS CartId
 
-SELECT *
-FROM carts
-EXEC InsertIntoCart   2, 8, 150
-EXEC InsertIntoCart  10, 9, 2000
-EXEC InsertIntoCart  11, 14, 99
-SELECT *
-FROM carts
-EXEC getcart 11
-GO
-
-
-SELECT *
-FROM Products_Order
-
-SELECT *
-FROM Products_Cart
 
 
 -- DECLARE @sum int;
@@ -399,7 +315,10 @@ BEGIN
         AND StockTransactions.OrderId = @OrderId
 END
 GO
-
+select * from Warehouse
+GO
+update Warehouse set Reserved = 0 WHERE id = 15
+go
 
 /* StockAdjustment */
 CREATE OR ALTER PROCEDURE StockAdjustment
@@ -509,27 +428,6 @@ GO
 EXEC GetTotalAmountOfOrder 15
 GO
 
-
-EXEC ReturnOrder 1, 1, 5
-SELECT *
-FROM Warehouse
-SELECT *
-FROM StockTransactions
-
-SELECT *
-FROM Transactions
-GO
-EXEC ShipOrder 9
-SELECT *
-FROM Warehouse
-
-SELECT *
-FROM Products_Order
-SELECT *
-FROM StockTransactions
-SELECT *
-FROM Warehouse
-GO
 
 
 /* TopPopularProducts */

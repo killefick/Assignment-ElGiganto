@@ -64,7 +64,7 @@ INSERT INTO Products
 VALUES('Sammetskappa', 'silver', 1499 , 1)
 INSERT INTO Products
     (Name, ProductDetails, Price, CategoryId)
-VALUES('En helt jävla vanlig jacka', 'svart', 999 , 1)
+VALUES('Jacka', 'svart', 999 , 1)
 
 INSERT INTO Products
     (Name, ProductDetails, Price, CategoryId)

@@ -111,7 +111,7 @@ namespace ElGiganto
         }
 
 
-        public IEnumerable<Product> CheckOutCart(int customerNumber, int cartIdOut)
+        public IEnumerable<Product> CheckOutCartOnDB(int customerNumber, int cartIdOut)
         {
             try
             {
@@ -126,5 +126,6 @@ namespace ElGiganto
             }
         }
 
+       
     }
 }
