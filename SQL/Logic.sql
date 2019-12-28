@@ -233,23 +233,16 @@ BEGIN
     -- empty cart
     DELETE FROM Products_Cart
     WHERE Products_Cart.CartId = @CartId
-    
+
     RETURN @OrderNumberToCustomer
 END
     GO
 
 
-
-
--- DECLARE @sum int;
--- EXEC test 1,2, @summainternal = @sum output
--- SELECT @sum;
-
-
 DECLARE @orderno int;
 EXEC CheckoutCart 1, 7, @OrderNumberToCustomer = @orderno
 SELECT @orderno
-
+GO
 -- DECLARE @orderno int;
 -- EXEC CheckoutCart 2, 10, @OrderNumberToCustomer = @orderno
 -- SELECT @orderno
@@ -257,26 +250,6 @@ SELECT @orderno
 -- DECLARE @orderno int;
 -- EXEC CheckoutCart 3, 11, @OrderNumberToCustomer = @orderno
 
-GO
-SELECT *
-FROM StockTransactions
-ORDER BY ID DESC
-
-
-
-
-SELECT *
-FROM Products_Cart
-
-SELECT *
-FROM Products_Order
-
-SELECT *
-FROM Warehouse
-
-SELECT *
-FROM Products
-GO
 
 
 /* Popularitetsrapport */
@@ -315,10 +288,11 @@ BEGIN
         AND StockTransactions.OrderId = @OrderId
 END
 GO
-select * from Warehouse
+SELECT *
+FROM Warehouse
 GO
-update Warehouse set Reserved = 0 WHERE id = 15
-go
+UPDATE Warehouse SET Reserved = 0 WHERE id = 15
+GO
 
 /* StockAdjustment */
 CREATE OR ALTER PROCEDURE StockAdjustment
@@ -368,9 +342,7 @@ BEGIN
         WHERE Warehouse.ProductId = @ProductId
 END
 GO
-EXEC ReturnOrder 19, 14, 222,223
-SELECT *
-FROM Warehouse
+EXEC ReturnOrder 19, 14, 10,10
 SELECT *
 FROM StockTransactions
 GO
@@ -489,19 +461,48 @@ GO
 --  Returnerat antal föregående månad
 --  Returnerat antal senaste 365 dagar
 
--- CREATE OR ALTER VIEW SoldLast365Days
--- AS
---     (
-SELECT c.Name AS Kategori, st.StockChange AS Saldoändring
-FROM Stocktransactions st
-    INNER JOIN Products p ON p.Id = st.ProductId
-    INNER JOIN Categories c ON p.CategoryId = c.Id
-WHERE st.DateTimeOfTransaction > (GETDATE() - 365)
-    AND st.transactionid = 1
-GROUP BY c.Name, st.StockChange
--- )
+
+
+CREATE OR ALTER VIEW Sold_Last_Month
+AS
+    (
+    SELECT c.Name AS Category, SUM(st.StockChange * -1) AS Sold_This_Month
+    FROM Stocktransactions st
+        INNER JOIN Products p ON p.Id = st.ProductId
+        INNER JOIN Categories c ON c.Id = p.CategoryId
+    WHERE MONTH(st.DateTimeOfTransaction) = MONTH(GETDATE())
+        AND st.transactionid = 1
+    GROUP BY c.Name, st.StockChange
+    )
 GO
 
+CREATE OR ALTER VIEW Sold_Last_Month
+AS
+    (
+    SELECT c.Name AS Category, SUM(st.StockChange * -1) AS Sold_Last_Month
+    FROM Stocktransactions st
+        INNER JOIN Products p ON p.Id = st.ProductId
+        INNER JOIN Categories c ON c.Id = p.CategoryId
+    WHERE MONTH(st.DateTimeOfTransaction) = MONTH(GETDATE()) -1
+        AND st.transactionid = 1
+    GROUP BY c.Name, st.StockChange
+    )
+GO
+
+CREATE OR ALTER VIEW SoldLast365Days
+AS
+    (
+    SELECT c.Name AS Category, SUM(st.StockChange * -1) AS Sold_Last_365
+    FROM Stocktransactions st
+        INNER JOIN Products p ON p.Id = st.ProductId
+        INNER JOIN Categories c ON c.Id = p.CategoryId
+    WHERE st.DateTimeOfTransaction > (GETDATE() - 365)
+        AND st.transactionid = 1
+    GROUP BY c.Name, st.StockChange
+)
+GO
 
 SELECT *
 FROM StockTransactions
+SELECT *
+FROM Categories

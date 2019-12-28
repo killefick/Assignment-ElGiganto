@@ -3,10 +3,14 @@ SELECT *
 FROM GetAllProducts
 
 /* ListProductsByCategory */
-EXEC ListProductsByCategory 0
 --all products
-EXEC ListProductsByCategory 1
+EXEC ListProductsByCategory 0
 --products in stock
+EXEC ListProductsByCategory 1
+
+/* Popularitetsrapport */
+/* CategoryId */
+EXEC CheckPopularity 1
 
 /* CreateCart & Return CartId */
 DECLARE @CartIdOut int;
@@ -15,38 +19,82 @@ SELECT @CartIdOut AS CartId
 
 /* Insert into cart */
 /* (CartId, ProductId, Amount) */
-EXEC InsertIntoCart  22, 15, 1
-SELECT *
-FROM Warehouse
+EXEC InsertIntoCart  23, 11, 1
 SELECT Name, Popularity
 FROM Products
 
 /* GetCart */
-EXEC GetCart 22
+EXEC GetCart 23
 SELECT *
 FROM Products_Cart
-SELECT *
-FROM Products_Order
 
 /* CheckoutCart */
 /* (@CustomerNumber, CartId */
+SELECT *
+FROM Warehouse
 DECLARE @orderno int;
-EXEC CheckoutCart 123456, 22, @OrderNumberToCustomer = @orderno
+EXEC CheckoutCart 123456, 23, @OrderNumberToCustomer = @orderno
 SELECT @orderno
 SELECT *
 FROM Warehouse
 
 /* ShipOrder */
-EXEC ShipOrder 17
+SELECT *
+FROM Orders
+SELECT *
+FROM Warehouse
+EXEC ShipOrder 22
 SELECT *
 FROM Warehouse
 SELECT *
 FROM StockTransactions
 
-update Warehouse set Reserved = 0 WHERE id = 15
+
+/* StockAdjustment */
+/* ProductId, StockChange (Amount), TransactionId  
+    (NULL = adjustment, 1 = sold, 2 = returned) */
+SELECT *
+FROM Warehouse
+EXEC StockAdjustment 15, 25
+SELECT *
+FROM Warehouse
+
+/* ReturnOrder */
+/* 
+    OrderId
+    ProductId
+    AmountReturned
+    StockChange = NULL if not returned into stock
+ */
+SELECT *
+FROM Warehouse
+SELECT *
+FROM StockTransactions
+EXEC ReturnOrder 14, 12, 1
+SELECT *
+FROM Warehouse
+SELECT *
+FROM StockTransactions
+
+/* TopPopularProducts */
+SELECT CategoryName, ProductName, Popularity, Ranking
+FROM MostPopular
+WHERE Ranking <= 5
+
+/* TopReturnedProducts */
+SELECT TOP 5
+    *
+FROM TopReturnedProducts
 
 /* Delete carts older than 14 days */
 EXEC ClearOldCarts
+
+/* ListAllOrdersTotalAmount */
+EXEC ListAllOrdersTotalAmount
+
+/* GetTotalAmountOfOrder */
+EXEC GetTotalAmountOfOrder 15
+
 
 SELECT *
 FROM customers

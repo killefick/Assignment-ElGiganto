@@ -74,3 +74,19 @@ BEGIN
 	WHERE Warehouse.Id = inserted.Id
 END
 GO
+
+
+/* StandardStockAdjustment */
+CREATE OR ALTER TRIGGER StandardStockAdjustment
+ON StockTransactions
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    UPDATE StockTransactions
+	SET TransactionId = 2
+	WHERE TransactionId IS NULL
+END
+GO
+
+SELECT *
+FROM StockTransactions
