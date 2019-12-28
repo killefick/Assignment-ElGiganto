@@ -33,7 +33,7 @@ FROM Products_Cart
 SELECT *
 FROM Warehouse
 DECLARE @orderno int;
-EXEC CheckoutCart 123456, 23, @OrderNumberToCustomer = @orderno
+EXEC CheckoutCart 123456, 23
 SELECT @orderno
 SELECT *
 FROM Warehouse

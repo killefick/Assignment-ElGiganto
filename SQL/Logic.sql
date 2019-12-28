@@ -188,8 +188,7 @@ GO
 /* CheckoutCart */
 CREATE OR ALTER PROCEDURE CheckoutCart
     (@CustomerNumber int,
-    @CartId int,
-    @OrderNumberToCustomer int output)
+    @CartId int)
 AS
 BEGIN
     -- create order and insert customer id
@@ -227,29 +226,15 @@ BEGIN
     WHERE Warehouse.ProductId = po.ProductId
         AND po.OrderId = @OrderId
 
-    --generate random order number
-    SET @OrderNumberToCustomer = FLOOR(RAND()*(99999999-10000000+1))+10000000;
 
     -- empty cart
     DELETE FROM Products_Cart
     WHERE Products_Cart.CartId = @CartId
 
-    RETURN @OrderNumberToCustomer
+    --generate random order number
+    SELECT FLOOR(RAND()*(99999999-10000000+1))+10000000 AS OrderNumber
 END
     GO
-
-
-DECLARE @orderno int;
-EXEC CheckoutCart 1, 7, @OrderNumberToCustomer = @orderno
-SELECT @orderno
-GO
--- DECLARE @orderno int;
--- EXEC CheckoutCart 2, 10, @OrderNumberToCustomer = @orderno
--- SELECT @orderno
-
--- DECLARE @orderno int;
--- EXEC CheckoutCart 3, 11, @OrderNumberToCustomer = @orderno
-
 
 
 /* Popularitetsrapport */
@@ -463,7 +448,7 @@ GO
 
 
 
-CREATE OR ALTER VIEW Sold_Last_Month
+CREATE OR ALTER VIEW Sold_This_Month
 AS
     (
     SELECT c.Name AS Category, SUM(st.StockChange * -1) AS Sold_This_Month
@@ -472,7 +457,7 @@ AS
         INNER JOIN Categories c ON c.Id = p.CategoryId
     WHERE MONTH(st.DateTimeOfTransaction) = MONTH(GETDATE())
         AND st.transactionid = 1
-    GROUP BY c.Name, st.StockChange
+    GROUP BY c.Name
     )
 GO
 
@@ -485,11 +470,11 @@ AS
         INNER JOIN Categories c ON c.Id = p.CategoryId
     WHERE MONTH(st.DateTimeOfTransaction) = MONTH(GETDATE()) -1
         AND st.transactionid = 1
-    GROUP BY c.Name, st.StockChange
+    GROUP BY c.Name
     )
 GO
 
-CREATE OR ALTER VIEW SoldLast365Days
+CREATE OR ALTER VIEW Sold_Last_365_Days
 AS
     (
     SELECT c.Name AS Category, SUM(st.StockChange * -1) AS Sold_Last_365
@@ -498,9 +483,19 @@ AS
         INNER JOIN Categories c ON c.Id = p.CategoryId
     WHERE st.DateTimeOfTransaction > (GETDATE() - 365)
         AND st.transactionid = 1
-    GROUP BY c.Name, st.StockChange
+    GROUP BY c.Name
 )
 GO
+
+SELECT *
+FROM Sold_This_Month
+
+SELECT *
+FROM Sold_Last_Month
+
+SELECT *
+FROM Sold_Last_365_Days
+
 
 SELECT *
 FROM StockTransactions
