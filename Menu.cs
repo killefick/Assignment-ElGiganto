@@ -182,16 +182,15 @@ namespace ElGiganto
                             {
                                 myDB.InsertIntoCart(cartIdOut, product.Id, product.Amount);
                             }
-                            myProduct.CheckOutCart(myProductListFromDB, myDB, customerNumber, cartIdOut);
-                            int orderNumber = myProduct.OrderNumber;
+                            int orderNumber = myProduct.CheckOutCart(myProductListFromDB, myDB, customerNumber, cartIdOut);
                             System.Console.WriteLine("Tack för din order! Ditt ordernummer är " + orderNumber + ".");
-
                         }
 
                         else
                         {
                             System.Console.WriteLine("Varukorgen är tom");
                         }
+
                         Console.ReadLine();
                         break;
 

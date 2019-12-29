@@ -117,7 +117,7 @@ namespace ElGiganto
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    return connection.Query<Product>($"DECLARE @orderno int; EXEC CheckoutCart {customerNumber}, {cartIdOut}, @OrderNumberToCustomer = @orderno; SELECT @orderno OrderNumber");
+                    return connection.Query<Product>($"EXEC CheckoutCart {customerNumber}, {cartIdOut}");
                 }
             }
             catch (System.Exception)
