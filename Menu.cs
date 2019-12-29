@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 namespace ElGiganto
 {
-    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, InsertIntoCart, ShowCart, EmptyCart, PlaceOrder };
+    public enum Choice
+    {
+        Quit, GetAllProducts, MostPopular, ListProductsByCategory,
+        InsertIntoCart, ShowCart, EmptyCart, PlaceOrder, ShipOrder
+    };
 
     class Menu
     {
@@ -14,11 +18,12 @@ namespace ElGiganto
         {
             // default user choice
             int choice = 0;
-            int cartIdOut = 0;
+            int cartID = 0;
+            string query = "";
             Random myRandomNumber = new Random();
             int customerNumber = myRandomNumber.Next(100000, 1000000);
             myDB.CreateCustomer(customerNumber);
-            cartIdOut = myProduct.CreateCart(myProductListFromDB, myDB, customerNumber);
+            cartID = myProduct.CreateCart(myProductListFromDB, myDB, customerNumber);
 
 
             while (true)
@@ -27,7 +32,7 @@ namespace ElGiganto
                 myProductListFromDB.Clear();
 
                 System.Console.WriteLine($"Kundnummer: {customerNumber}");
-                System.Console.WriteLine($"CartId: {cartIdOut}");
+                System.Console.WriteLine($"CartId: {cartID}");
 
                 Console.WriteLine(Convert.ToInt32(Choice.GetAllProducts) + ": Visa alla produkter i lagret\n"
                 + Convert.ToInt32(Choice.MostPopular) + ": Top 5 produkter per kategori\n"
@@ -36,6 +41,7 @@ namespace ElGiganto
                 + Convert.ToInt32(Choice.ShowCart) + ": Visa varukorgen\n"
                 + Convert.ToInt32(Choice.EmptyCart) + ": Töm varukorgen\n"
                 + Convert.ToInt32(Choice.PlaceOrder) + ": Lägg order\n"
+                + Convert.ToInt32(Choice.ShipOrder) + ": Skicka order\n"
 
                 + Convert.ToInt32(Choice.Quit) + ": Avsluta\n");
 
@@ -57,7 +63,8 @@ namespace ElGiganto
                 {
                     case Choice.GetAllProducts:
                         Console.Clear();
-                        myProductListFromDB = myProduct.GetAllProducts(myProductListFromDB, myDB);
+                        query = "SELECT * FROM GetAllProducts";
+                        myProductListFromDB = myProduct.QueryReturnList(myProductListFromDB, myDB, query);
 
                         Console.WriteLine("Produktkategori\t          Produktnamn\t          Pris\t          Popularitet");
                         foreach (var product in myProductListFromDB)
@@ -110,7 +117,8 @@ namespace ElGiganto
 
 
                     case Choice.InsertIntoCart:
-                        myProductListFromDB = myProduct.GetAllProducts(myProductListFromDB, myDB);
+                        query = "SELECT * FROM GetAllProducts";
+                        myProductListFromDB = myProduct.QueryReturnList(myProductListFromDB, myDB, query);
                         while (true)
                         {
                             Product tempProduct = new Product();
@@ -180,10 +188,11 @@ namespace ElGiganto
 
                             foreach (var product in myCart)
                             {
-                                myDB.InsertIntoCart(cartIdOut, product.Id, product.Amount);
+                                myDB.InsertIntoCart(cartID, product.Id, product.Amount);
                             }
-                            int orderNumber = myProduct.CheckOutCart(myProductListFromDB, myDB, customerNumber, cartIdOut);
+                            int orderNumber = myProduct.CheckOutCart(myProductListFromDB, myDB, customerNumber, cartID);
                             System.Console.WriteLine("Tack för din order! Ditt ordernummer är " + orderNumber + ".");
+                            myCart.Clear();
                         }
 
                         else
@@ -191,6 +200,12 @@ namespace ElGiganto
                             System.Console.WriteLine("Varukorgen är tom");
                         }
 
+                        Console.ReadLine();
+                        break;
+
+                    case Choice.ShipOrder:
+                        myDB.ShipOrder(cartID);
+                        Console.WriteLine("Ordern är skickad.");
                         Console.ReadLine();
                         break;
 

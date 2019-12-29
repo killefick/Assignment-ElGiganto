@@ -88,5 +88,41 @@ BEGIN
 END
 GO
 
+/* IsNotInStock */
+CREATE OR ALTER TRIGGER IsNotInStock
+ON Warehouse
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    UPDATE Products
+	SET Products.IsInStock = 0
+    FROM Products
+        INNER JOIN Warehouse w
+        ON w.ProductId = Products.Id
+	WHERE w.ProductId = Products.Id
+        AND w.Available <= 0
+END
+GO
+
+/* IsInStock */
+CREATE OR ALTER TRIGGER IsInStock
+ON Warehouse
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    UPDATE Products
+	SET Products.IsInStock = 1
+    FROM Products
+        INNER JOIN Warehouse w
+        ON w.ProductId = Products.Id
+	WHERE w.ProductId = Products.Id
+        AND w.Available > 0
+END
+GO
+
 SELECT *
-FROM StockTransactions
+FROM Warehouse
+
+update Warehouse set Reserved = 100 where id = 5
+SELECT *
+FROM Products

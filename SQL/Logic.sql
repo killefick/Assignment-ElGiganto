@@ -11,14 +11,17 @@
 -- SELECT @sum;
 -- GO
 
+-- select * from Warehouse
 
 /* GetAllProducts */
 CREATE OR ALTER VIEW GetAllProducts
 AS
-    SELECT p.Id, c.Name CategoryName, p.Name ProductName, Price, IsInStock, Popularity
+    SELECT p.Id, c.Name CategoryName, p.Name ProductName, Price, IsInStock, Popularity, w.InStock, w.Reserved, w.Available
     FROM Products p
         INNER JOIN Categories c
         ON p.CategoryId = c.Id
+        INNER JOIN Warehouse w 
+        ON w.ProductId = p.Id
 GO
 
 

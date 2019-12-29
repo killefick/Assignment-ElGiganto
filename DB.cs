@@ -1,28 +1,37 @@
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using Dapper;
 
 namespace ElGiganto
 {
     public class DB
-
     {
         private readonly string connectionString;
 
-        // constructor
         public DB()
         {
             this.connectionString = "Server=40.85.84.155;Database=ELGIGANTO13;User=Student13;Password=YH-student@2019;";
         }
-        // public method to call from application
-        // IEnumerable: allows looping over generic or non-generic lists
+
+        public IEnumerable<Product> QueryDatabaseReturnIEnumerable(string query)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    return connection.Query<Product>(query);
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
         public IEnumerable<Product> GetAllProductsFromDB()
         {
             try
             {
-                // connects to the database
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     return connection.Query<Product>("SELECT * FROM GetAllProducts");
@@ -126,6 +135,19 @@ namespace ElGiganto
             }
         }
 
-       
+          public void ShipOrder(int orderId)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Query($"EXEC Shiporder {orderId}");
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
     }
 }

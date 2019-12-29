@@ -22,9 +22,9 @@ namespace ElGiganto
 
         public bool IsInStock { get; set; }
 
-        public List<Product> GetAllProducts(List<Product> myProductList, DB myDB)
+        public List<Product> QueryReturnList(List<Product> myProductList, DB myDB, string query)
         {
-            foreach (var product in myDB.GetAllProductsFromDB())
+            foreach (var product in myDB.QueryDatabaseReturnIEnumerable(query))
             {
                 myProductList.Add(product);
             }
