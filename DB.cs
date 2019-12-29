@@ -28,13 +28,13 @@ namespace ElGiganto
             }
         }
 
-        public IEnumerable<Product> GetAllProductsFromDB()
+        public IEnumerable<Product> QueryDatabaseReturnIEnumerable(string query, int input)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    return connection.Query<Product>("SELECT * FROM GetAllProducts");
+                    return connection.Query<Product>(query);
                 }
             }
             catch (System.Exception)
@@ -42,6 +42,7 @@ namespace ElGiganto
                 throw;
             }
         }
+
 
         public dynamic CreateCustomer(int customerNumber)
         {
@@ -58,36 +59,7 @@ namespace ElGiganto
             }
         }
 
-        public IEnumerable<Product> MostPopularFromDB()
-        {
-            try
-            {
-                // connects to the database
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    return connection.Query<Product>("SELECT CategoryName, ProductName, Popularity, Ranking FROM MostPopular WHERE Ranking <= 5");
-                }
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-        }
 
-        public IEnumerable<Product> ListProductsByCategoryFromDB(int input)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    return connection.Query<Product>($"EXEC ListProductsByCategory {input}");
-                }
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-        }
 
         public IEnumerable<Product> CreateCartOnDB(int customerNumber)
         {
@@ -104,22 +76,6 @@ namespace ElGiganto
             }
         }
 
-        public void InsertIntoCart(int cartIdOut, int productId, int amount)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Query($"EXEC InsertIntoCart  {cartIdOut}, {productId}, {amount}");
-                }
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-        }
-
-
         public IEnumerable<Product> CheckOutCartOnDB(int customerNumber, int cartIdOut)
         {
             try
@@ -135,7 +91,22 @@ namespace ElGiganto
             }
         }
 
-          public void ShipOrder(int orderId)
+        public void InsertIntoCart(int cartIdOut, int productId, int amount)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Query($"EXEC InsertIntoCart {cartIdOut}, {productId}, {amount}");
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
+        public void ShipOrder(int orderId)
         {
             try
             {

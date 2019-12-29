@@ -31,18 +31,11 @@ namespace ElGiganto
             return myProductList;
         }
 
-        public List<Product> MostPopular(List<Product> myProductList, DB myDB)
-        {
-            foreach (var product in myDB.MostPopularFromDB())
-            {
-                myProductList.Add(product);
-            }
-            return myProductList;
-        }
 
-        public List<Product> ListProductsByCategory(List<Product> myProductList, DB myDB, int input)
+        public List<Product> QueryReturnList(List<Product> myProductList, DB myDB,string query, int input)
         {
-            foreach (var product in myDB.ListProductsByCategoryFromDB(input))
+            
+            foreach (var product in myDB.QueryDatabaseReturnIEnumerable(query, input))
             {
                 myProductList.Add(product);
             }
@@ -71,6 +64,5 @@ namespace ElGiganto
             OrderNumber = myProductList[0].OrderNumber;
             return OrderNumber;
         }
-
     }
 }

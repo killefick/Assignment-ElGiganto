@@ -76,7 +76,8 @@ namespace ElGiganto
 
                     case Choice.MostPopular:
                         Console.Clear();
-                        myProductListFromDB = myProduct.MostPopular(myProductListFromDB, myDB);
+                        query = "SELECT CategoryName, ProductName, Popularity, Ranking FROM MostPopular WHERE Ranking <= 5";
+                        myProductListFromDB = myProduct.QueryReturnList(myProductListFromDB, myDB, query);
                         Console.WriteLine("Produktkategori\t Produktnamn\t Popularitet \t  Rangordning");
                         foreach (var product in myProductListFromDB)
                         {
@@ -103,8 +104,9 @@ namespace ElGiganto
                                 input = 0;
                                 break;
                         }
+                        query = $"EXEC ListProductsByCategory {input}";
 
-                        myProductListFromDB = myProduct.ListProductsByCategory(myProductListFromDB, myDB, input);
+                        myProductListFromDB = myProduct.QueryReturnList(myProductListFromDB, myDB, query, input);
 
                         Console.WriteLine("Antal produkter: " + myProductListFromDB.Count);
                         Console.WriteLine("Produktnamn\t Pris \t  Rangordning");
@@ -185,7 +187,6 @@ namespace ElGiganto
                     case Choice.PlaceOrder:
                         if (myCart.Count != 0)
                         {
-
                             foreach (var product in myCart)
                             {
                                 myDB.InsertIntoCart(cartID, product.Id, product.Amount);
