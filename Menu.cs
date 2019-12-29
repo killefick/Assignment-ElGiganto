@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ElGiganto
 {
-    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, InsertIntoCart, ShowCart, PlaceOrder };
+    public enum Choice { Quit, GetAllProducts, MostPopular, ListProductsByCategory, InsertIntoCart, ShowCart, EmptyCart, PlaceOrder };
 
     class Menu
     {
@@ -34,6 +34,7 @@ namespace ElGiganto
                 + Convert.ToInt32(Choice.ListProductsByCategory) + ": Produktlista per kategori och sorterat på popularitet\n"
                 + Convert.ToInt32(Choice.InsertIntoCart) + ": Lägg varor i varukorgen\n"
                 + Convert.ToInt32(Choice.ShowCart) + ": Visa varukorgen\n"
+                + Convert.ToInt32(Choice.EmptyCart) + ": Töm varukorgen\n"
                 + Convert.ToInt32(Choice.PlaceOrder) + ": Lägg order\n"
 
                 + Convert.ToInt32(Choice.Quit) + ": Avsluta\n");
@@ -57,10 +58,11 @@ namespace ElGiganto
                     case Choice.GetAllProducts:
                         Console.Clear();
                         myProductListFromDB = myProduct.GetAllProducts(myProductListFromDB, myDB);
-                        Console.WriteLine("Produktkategori\t Produktnamn\t Pris \t  Popularitet");
+
+                        Console.WriteLine("Produktkategori\t          Produktnamn\t          Pris\t          Popularitet");
                         foreach (var product in myProductListFromDB)
                         {
-                            Console.WriteLine($"{product.CategoryName}\t {product.ProductName}\t {product.Price}\t {product.Popularity}");
+                            Console.WriteLine($"{product.CategoryName}\t          {product.ProductName}\t          {product.Price}\t          {product.Popularity}");
                         }
                         PressAnyKey();
                         break;
@@ -114,23 +116,44 @@ namespace ElGiganto
                             Product tempProduct = new Product();
                             Console.Clear();
                             int productId = 0;
+                            int amount = 0;
                             Console.WriteLine("Id \t\t Produktkategori   \t Produktnamn \t\t\t      Pris \t\t  Popularitet");
                             foreach (var product in myProductListFromDB)
                             {
                                 Console.WriteLine($"{product.Id} \t\t {product.CategoryName}   \t\t {product.ProductName} \t\t\t      {product.Price} \t\t {product.Popularity}");
                             }
-                            System.Console.Write("Vilken produkt ska läggas till varukorgen (ange Id) eller [a]vbryt: ");
+                            System.Console.Write("Vilken produkt ska läggas till varukorgen (ange Id) eller tryck valfri tangent för att avbryta: ");
                             userinput = Console.ReadLine().ToLower();
-                            if (userinput == "a")
-                            {
-                                break;
-                            }
-                            else
+
+                            try
                             {
                                 productId = Int32.Parse(userinput);
                             }
-                            System.Console.Write("Ange antal: ");
-                            int amount = Int32.Parse(Console.ReadLine());
+                            catch (System.Exception)
+                            {
+                                break;
+                            }
+
+                            if (myProductListFromDB.Count >= productId)
+                            {
+                                System.Console.Write("Ange antal eller tryck valfri tangent för att avbryta: ");
+                            }
+
+                            else
+                            {
+                                System.Console.Write("Fel Id");
+                                Console.ReadLine();
+                                break;
+                            }
+
+                            try
+                            {
+                                amount = Int32.Parse(Console.ReadLine());
+                            }
+                            catch (System.Exception)
+                            {
+                                break;
+                            }
 
                             tempProduct.Id = productId;
                             tempProduct.Amount = amount;
@@ -147,14 +170,28 @@ namespace ElGiganto
                         Console.ReadLine();
                         break;
 
+                    case Choice.EmptyCart:
+                        myCart.Clear();
+                        break;
+
                     case Choice.PlaceOrder:
-                        foreach (var product in myCart)
+                        if (myCart.Count != 0)
                         {
-                            myDB.InsertIntoCart(cartIdOut, product.Id, product.Amount);
+
+                            foreach (var product in myCart)
+                            {
+                                myDB.InsertIntoCart(cartIdOut, product.Id, product.Amount);
+                            }
+                            myProduct.CheckOutCart(myProductListFromDB, myDB, customerNumber, cartIdOut);
+                            int orderNumber = myProduct.OrderNumber;
+                            System.Console.WriteLine("Tack för din order! Ditt ordernummer är " + orderNumber + ".");
+
                         }
-                        myProduct.CheckOutCart(myProductListFromDB, myDB, customerNumber, cartIdOut);
-                        int orderNumber = myProduct.OrderNumber;
-                        System.Console.WriteLine("Tack för din order! Ditt ordernummer är " + orderNumber + ".");
+
+                        else
+                        {
+                            System.Console.WriteLine("Varukorgen är tom");
+                        }
                         Console.ReadLine();
                         break;
 

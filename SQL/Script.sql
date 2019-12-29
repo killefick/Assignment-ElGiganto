@@ -70,7 +70,7 @@ SELECT *
 FROM Warehouse
 SELECT *
 FROM StockTransactions
-EXEC ReturnOrder 14, 12, 1
+EXEC ReturnOrder 14, 15, 12
 SELECT *
 FROM Warehouse
 SELECT *
