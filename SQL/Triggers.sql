@@ -33,11 +33,11 @@ BEGIN
     FROM inserted
         INNER JOIN Products ON inserted.ProductId = Products.Id
     WHERE Products_Cart.Id = inserted.Id
-    -- check for amount = 0
+    -- check for amount <= 0
     DELETE Products_Cart 
     FROM inserted
     WHERE Products_Cart.Id = inserted.Id
-        AND Products_Cart.Amount = 0
+        AND Products_Cart.Amount <= 0
 END
 GO
 

@@ -78,7 +78,7 @@ CREATE OR ALTER PROCEDURE ClearOldCarts
 AS
 BEGIN
     DELETE FROM Carts
-    WHERE (DATEDIFF(WEEK, DateTimeCreated, GETDATE())) >0
+    WHERE (DATEDIFF(WEEK, DateTimeCreated, GETDATE())) > 2
 END
 GO
 
@@ -124,6 +124,21 @@ BEGIN
         Products_Cart pc
         INNER JOIN Products p ON pc.ProductId = p.Id
     WHERE pc.CartId = @CartId;
+END
+    GO
+
+/* UpdateCart */
+CREATE OR ALTER PROCEDURE UpdateCart
+    (@CartId int,
+    @ProductId int,
+    @Amount int
+)
+AS
+BEGIN
+    UPDATE Products_Cart
+SET Products_Cart.Amount += @Amount
+WHERE Products_Cart.CartId = @CartId
+        AND Products_Cart.ProductId = @ProductId
 END
     GO
 
@@ -178,7 +193,6 @@ WHERE Products_Cart.CartId = @CartId
     Products_Order po
     WHERE Warehouse.ProductId = po.ProductId
     AND po.OrderId = @OrderId
-
 
     -- empty cart
     DELETE FROM Products_Cart
@@ -239,6 +253,9 @@ WHERE po.OrderId = @OrderId
     ON Warehouse.ProductId = StockTransactions.ProductId
     WHERE Warehouse.ProductId = StockTransactions.ProductId
     AND StockTransactions.OrderId = @OrderId
+
+    DELETE FROM Products_Order
+    WHERE Products_Order.Id = @OrderId
 COMMIT
 END TRY
 
@@ -338,6 +355,7 @@ BEGIN
     GROUP BY OrderId
 END
 GO
+
 /* Sold_Last_Month */
 CREATE OR ALTER PROCEDURE Sold_Last_Month
 AS
@@ -351,6 +369,7 @@ FROM
     Stocktransactions st
     INNER JOIN Products p ON p.Id = st.ProductId
     INNER JOIN Categories c ON c.Id = p.CategoryId
+/* https://stackoverflow.com/questions/1424999/get-the-records-OF-last-month-IN-sql-server */
 WHERE DateTimeOfTransaction >= DATEADD(month, -1, @startOfCurrentMonth)
     AND DateTimeOfTransaction < @startOfCurrentMonth
     AND st.transactionid = 1
@@ -371,9 +390,35 @@ FROM
     Stocktransactions st
     INNER JOIN Products p ON p.Id = st.ProductId
     INNER JOIN Categories c ON c.Id = p.CategoryId
+/* https://stackoverflow.com/questions/1424999/get-the-records-OF-last-month-IN-sql-server */
 WHERE DateTimeOfTransaction >= DATEADD(month, -1, @startOfCurrentMonth)
     AND DateTimeOfTransaction < @startOfCurrentMonth
     AND st.transactionid = 3
 GROUP BY c.Name
     )
+GO
+
+/* Kategorirapport */
+CREATE OR ALTER PROCEDURE Kategorirapport
+AS
+BEGIN
+    SELECT
+        *
+    FROM
+        Sold_This_Month
+    EXEC Sold_Last_Month
+    SELECT
+        *
+    FROM
+        Sold_Last_365_Days
+    SELECT
+        *
+    FROM
+        Returned_This_Month
+    EXEC returned_Last_Month
+    SELECT
+        *
+    FROM
+        Returned_Last_365_Days
+END
 GO

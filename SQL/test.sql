@@ -1,15 +1,14 @@
-CREATE OR ALTER VIEW Kategorirapport
+CREATE OR ALTER PROCEDURE Kategorirapport
 AS
-(
-    SELECT returned_This_Month.Category Cat1, Returned_This_Month, rlm.Category Cat2, Returned_Last_Month
-    FROM returned_This_Month
-    FULL JOIN returned_Last_month rlm ON rlm.category = returned_this_month.category
 
-)
+BEGIN
+SELECT * FROM Sold_This_Month
+EXEC Sold_Last_Month
+SELECT * FROM Sold_Last_365_Days
+SELECT * FROM Returned_This_Month
+EXEC returned_Last_Month
+SELECT * FROM Returned_Last_365_Days
+END
 GO
 
-UPDATE StockTransactions set DateTimeOfTransaction = GETDATE() where id = 4
-UPDATE StockTransactions set AmountReturned = 3 where id = 4
-select  * from StockTransactions
-select  * from Sold_This_Month
-select  * from Returned_This_Month
+exec Kategorirapport

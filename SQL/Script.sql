@@ -1,65 +1,111 @@
-/* GetAllProducts */
-SELECT *
+/* PRODUKTDATA */
+
+/* Produktlista per kategori och sorterat på popularitet */
+SELECT ProductName, Price
 FROM GetAllProducts
+WHERE IsInStock = 1
 
-/* ListProductsByCategory */
---all products
-EXEC ListProductsByCategory 0
---products in stock
-EXEC ListProductsByCategory 1
+SELECT ProductName, Price
+FROM GetAllProducts
+WHERE IsInStock = 0
 
-/* Popularitetsrapport */
-/* CategoryId */
-EXEC CheckPopularity 1
+/* Produktdetaljer */
+EXEC GetProductDetails 14
+-- ProductId
+SELECT Name, Popularity
+FROM Products
 
-/* CreateCart & Return CartId */
+
+
+
+/* VARUKORG */
+
+/* Skapa varukorg */
 DECLARE @CartIdOut int;
 EXEC @CartIdOut = CreateCart 123456
 SELECT @CartIdOut AS CartId
 
-/* Insert into cart */
-/* (CartId, ProductId, Amount) */
-EXEC InsertIntoCart  23, 11, 1
+/* Lägga i varukorg */
+/* Öka popularitet med 5 varje gång någon lägger i varukorgen */
 SELECT Name, Popularity
 FROM Products
+WHERE Id = 13
+EXEC InsertIntoCart  46, 13, 10
+-- CartId, ProductId, Amount
+SELECT Name, Popularity
+FROM Products
+WHERE Id = 13
 
-/* GetCart */
-EXEC GetCart 23
+/* Hämta varukorg */
 SELECT *
 FROM Products_Cart
+EXEC GetCart 46
 
-/* CheckoutCart */
-/* (@CustomerNumber, CartId */
+/* Ändra varukorg */
 SELECT *
-FROM Warehouse
-DECLARE @orderno int;
-EXEC CheckoutCart 123456, 23
-SELECT @orderno
+FROM Products_Cart
+EXEC UpdateCart 23, 12, -1
+-- CartId, ProductId, Amount
 SELECT *
-FROM Warehouse
+FROM Products_Cart
+SELECT Name, Popularity
+FROM Products
+WHERE Id = 12
 
-/* ShipOrder */
-SELECT *
-FROM Orders
+/* Checka ut varukorg */
 SELECT *
 FROM Warehouse
-EXEC ShipOrder 22
+SELECT Name, Popularity
+FROM Products
+WHERE Id = 13
+EXEC CheckoutCart 123456, 46
+-- CustomerNumber, CartId 
+SELECT *
+FROM Products_Order
+SELECT *
+FROM Warehouse
+SELECT Name, Popularity
+FROM Products
+WHERE Id = 13
+
+/* Rensa gamla varukorgar */
+SELECT *
+FROM Carts
+UPDATE Carts SET DateTimeCreated = '2019-12-14' WHERE Id = 25
+EXEC ClearOldCarts
+SELECT *
+FROM Carts
+
+
+
+
+/* ORDER / LAGER */
+
+/* Leverera order */
+SELECT *
+FROM Warehouse
+EXEC ShipOrder 37
+SELECT *
+FROM StockTransactions
+SELECT *
+FROM Warehouse
+SELECT *
+FROM Products_Order
+
+/* Justera lagret */
+/* ProductId, StockChange (Amount), TransactionId  
+    (NULL = adjustment, 1 = sold, 2 = returned) */
+SELECT *
+FROM Warehouse
+EXEC StockAdjustment 1, 25
+EXEC StockAdjustment 2, -10
+EXEC StockAdjustment 3, 5, 2
 SELECT *
 FROM Warehouse
 SELECT *
 FROM StockTransactions
 
-
-/* StockAdjustment */
-/* ProductId, StockChange (Amount), TransactionId  
-    (NULL = adjustment, 1 = sold, 2 = returned) */
-SELECT *
-FROM Warehouse
-EXEC StockAdjustment 15, 25
-SELECT *
-FROM Warehouse
-
-/* ReturnOrder */
+/* Returnera Order */
 /* 
     OrderId
     ProductId
@@ -70,43 +116,25 @@ SELECT *
 FROM Warehouse
 SELECT *
 FROM StockTransactions
-EXEC ReturnOrder 14, 15, 12
+EXEC ReturnOrder 14, 1, 12, 12
 SELECT *
 FROM Warehouse
 SELECT *
 FROM StockTransactions
 
-/* TopPopularProducts */
+
+
+
+
+/* STATISTIK /RAPPORTER */
+
+/* Popularitetsrapport */
 SELECT CategoryName, ProductName, Popularity, Ranking
 FROM MostPopular
 WHERE Ranking <= 5
 
-/* TopReturnedProducts */
-SELECT TOP 5
-    *
-FROM TopReturnedProducts
+/* Returrapport */
+SELECT TOP 5 * FROM TopReturnedProducts
 
-/* Delete carts older than 14 days */
-EXEC ClearOldCarts
-
-/* ListAllOrdersTotalAmount */
-EXEC ListAllOrdersTotalAmount
-
-/* GetTotalAmountOfOrder */
-EXEC GetTotalAmountOfOrder 15
-
-
-SELECT *
-FROM customers
-SELECT *
-FROM orders
-SELECT *
-FROM Carts
-SELECT *
-FROM Products_Cart
-SELECT *
-FROM Products_Order
-SELECT *
-FROM Warehouse
-SELECT *
-FROM StockTransactions
+/* Kategorirapport */
+EXEC Kategorirapport
