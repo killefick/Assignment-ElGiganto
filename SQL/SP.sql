@@ -338,3 +338,42 @@ BEGIN
     GROUP BY OrderId
 END
 GO
+/* Sold_Last_Month */
+CREATE OR ALTER PROCEDURE Sold_Last_Month
+AS
+DECLARE @startOfCurrentMonth datetime
+SET @startOfCurrentMonth = DATEADD(month, DATEDIFF(month, 0, CURRENT_TIMESTAMP), 0)
+(
+    SELECT
+    c.Name AS Category,
+    SUM(st.StockChange * -1) AS Sold_Last_Month
+FROM
+    Stocktransactions st
+    INNER JOIN Products p ON p.Id = st.ProductId
+    INNER JOIN Categories c ON c.Id = p.CategoryId
+WHERE DateTimeOfTransaction >= DATEADD(month, -1, @startOfCurrentMonth)
+    AND DateTimeOfTransaction < @startOfCurrentMonth
+    AND st.transactionid = 1
+GROUP BY c.Name
+    )
+GO
+
+/* Returned_Last_Month */
+CREATE OR ALTER PROCEDURE Returned_Last_Month
+AS
+DECLARE @startOfCurrentMonth datetime
+SET @startOfCurrentMonth = DATEADD(month, DATEDIFF(month, 0, CURRENT_TIMESTAMP), 0)
+(
+    SELECT
+    c.Name AS Category,
+    SUM(st.AmountReturned) AS Returned_Last_Month
+FROM
+    Stocktransactions st
+    INNER JOIN Products p ON p.Id = st.ProductId
+    INNER JOIN Categories c ON c.Id = p.CategoryId
+WHERE DateTimeOfTransaction >= DATEADD(month, -1, @startOfCurrentMonth)
+    AND DateTimeOfTransaction < @startOfCurrentMonth
+    AND st.transactionid = 3
+GROUP BY c.Name
+    )
+GO

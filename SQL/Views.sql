@@ -101,21 +101,7 @@ AS
     )
 GO
 
-CREATE OR ALTER VIEW Sold_Last_Month
-AS
-    (
-    SELECT
-        c.Name AS Category,
-        SUM(st.StockChange * -1) AS Sold_Last_Month
-    FROM
-        Stocktransactions st
-        INNER JOIN Products p ON p.Id = st.ProductId
-        INNER JOIN Categories c ON c.Id = p.CategoryId
-    WHERE MONTH(st.DateTimeOfTransaction) = MONTH(GETDATE()) -1
-        AND st.transactionid = 1
-    GROUP BY c.Name
-    )
-GO
+
 
 CREATE OR ALTER VIEW Sold_Last_365_Days
 AS
@@ -150,21 +136,6 @@ AS
     )
 GO
 
-CREATE OR ALTER VIEW Returned_Last_Month
-AS
-    (
-    SELECT
-        c.Name AS Category,
-        SUM(st.AmountReturned) AS Returned_Last_Month
-    FROM
-        Stocktransactions st
-        INNER JOIN Products p ON p.Id = st.ProductId
-        INNER JOIN Categories c ON c.Id = p.CategoryId
-    WHERE MONTH(st.DateTimeOfTransaction) = MONTH(GETDATE()) -1
-        AND st.transactionid = 3
-    GROUP BY c.Name
-    )
-GO
 
 CREATE OR ALTER VIEW Returned_Last_365_Days
 AS

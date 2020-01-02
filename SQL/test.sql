@@ -7,3 +7,9 @@ AS
 
 )
 GO
+
+UPDATE StockTransactions set DateTimeOfTransaction = GETDATE() where id = 4
+UPDATE StockTransactions set AmountReturned = 3 where id = 4
+select  * from StockTransactions
+select  * from Sold_This_Month
+select  * from Returned_This_Month
