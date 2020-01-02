@@ -71,6 +71,21 @@ BEGIN
 END
 GO
 
+select * from warehouse go
+
+/* UpdateStockBalance */
+CREATE OR ALTER TRIGGER UpdateStockBalance
+ON Products_Cart
+AFTER UPDATE
+AS
+BEGIN
+    UPDATE Warehouse
+	SET Warehouse.Reserved = inserted.Amount
+	FROM inserted
+	WHERE Warehouse.ProductId = inserted.ProductId
+END
+GO
+
 /* StandardStockAdjustment */
 CREATE OR ALTER TRIGGER StandardStockAdjustment
 ON StockTransactions

@@ -10,10 +10,12 @@ FROM GetAllProducts
 WHERE IsInStock = 0
 
 /* Produktdetaljer */
-EXEC GetProductDetails 14
+SELECT Name, Popularity
+FROM Products WHERE Id = 5
+EXEC GetProductDetails 5
 -- ProductId
 SELECT Name, Popularity
-FROM Products
+FROM Products WHERE Id = 5
 
 
 
@@ -29,36 +31,56 @@ SELECT @CartIdOut AS CartId
 /* Öka popularitet med 5 varje gång någon lägger i varukorgen */
 SELECT Name, Popularity
 FROM Products
-WHERE Id = 13
-EXEC InsertIntoCart  46, 13, 10
+WHERE Id = 2
+EXEC InsertIntoCart  36, 2, 1
 -- CartId, ProductId, Amount
 SELECT Name, Popularity
 FROM Products
-WHERE Id = 13
+WHERE Id = 2
 
 /* Hämta varukorg */
 SELECT *
 FROM Products_Cart
-EXEC GetCart 46
+EXEC GetCart 36
 
 /* Ändra varukorg */
+-- addera antal
 SELECT *
 FROM Products_Cart
-EXEC UpdateCart 23, 12, -1
+SELECT Name, Popularity
+FROM Products
+WHERE Id = 2
+EXEC UpdateCart 36, 2, 1
 -- CartId, ProductId, Amount
 SELECT *
 FROM Products_Cart
 SELECT Name, Popularity
 FROM Products
-WHERE Id = 12
+WHERE Id = 2
+SELECT *
+FROM Warehouse
+
+-- subtrahera antal
+SELECT *
+FROM Products_Cart
+SELECT Name, Popularity
+FROM Products
+WHERE Id = 2
+EXEC UpdateCart 36, 2, -1
+-- CartId, ProductId, Amount
+SELECT *
+FROM Products_Cart
+SELECT Name, Popularity
+FROM Products
+WHERE Id = 2
 
 /* Checka ut varukorg */
 SELECT *
 FROM Warehouse
 SELECT Name, Popularity
 FROM Products
-WHERE Id = 13
-EXEC CheckoutCart 123456, 46
+WHERE Id = 2
+EXEC CheckoutCart 123456, 36
 -- CustomerNumber, CartId 
 SELECT *
 FROM Products_Order
@@ -66,7 +88,7 @@ SELECT *
 FROM Warehouse
 SELECT Name, Popularity
 FROM Products
-WHERE Id = 13
+WHERE Id = 2
 
 /* Rensa gamla varukorgar */
 SELECT *
@@ -83,14 +105,16 @@ FROM Carts
 
 /* Leverera order */
 SELECT *
+FROM Products_Order
+SELECT *
 FROM Warehouse
-EXEC ShipOrder 37
+EXEC ShipOrder 39
 SELECT *
 FROM StockTransactions
 SELECT *
-FROM Warehouse
-SELECT *
 FROM Products_Order
+SELECT *
+FROM Warehouse
 
 /* Justera lagret */
 /* ProductId, StockChange (Amount), TransactionId  
