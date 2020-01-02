@@ -2,6 +2,8 @@
 CREATE OR ALTER PROCEDURE GetProductDetails
     (@ProcuctId int)
 AS
+BEGIN TRY
+BEGIN TRANSACTION
 SELECT
     c.Name Category,
     p.Name Product,
@@ -16,6 +18,11 @@ WHERE p.Id = @ProcuctId
 UPDATE Products 
 	SET Products.Popularity +=1
 	WHERE Products.Id = @ProcuctId
+COMMIT
+END TRY
+BEGIN CATCH
+ROLLBACK
+END CATCH
 GO
 
 /* ListProductsByCategory */
@@ -125,17 +132,20 @@ CREATE OR ALTER PROCEDURE CheckoutCart
     (@CustomerNumber int,
     @CartId int)
 AS
-BEGIN
+
+BEGIN TRY
+BEGIN TRANSACTION
+
     -- create order and insert customer id
     DECLARE @OrderId int
 
     INSERT INTO Orders
-        (CustomerId)
-    SELECT
-        Customers.Id
-    FROM
-        Customers
-    WHERE @CustomerNumber = Customers.CustomerNumber
+    (CustomerId)
+SELECT
+    Customers.Id
+FROM
+    Customers
+WHERE @CustomerNumber = Customers.CustomerNumber
     SET @OrderId = SCOPE_IDENTITY()
 
     -- update customer details
@@ -146,28 +156,28 @@ BEGIN
         Orders.CustomerZip = c.CustomerZip,
         Orders.CustomerCity = c.CustomerCity
     FROM
-        Orders o
-        INNER JOIN Customers c ON o.CustomerId = c.Id
+    Orders o
+    INNER JOIN Customers c ON o.CustomerId = c.Id
     WHERE o.CustomerId = c.Id
 
     -- move products from cart
     INSERT INTO Products_Order
-        (OrderId, ProductId, Amount)
-    SELECT
-        @OrderId,
-        Products_Cart.ProductId,
-        Products_Cart.Amount
-    FROM
-        Products_Cart
-    WHERE Products_Cart.CartId = @CartId
+    (OrderId, ProductId, Amount)
+SELECT
+    @OrderId,
+    Products_Cart.ProductId,
+    Products_Cart.Amount
+FROM
+    Products_Cart
+WHERE Products_Cart.CartId = @CartId
 
     -- reserve products in warehouse
     UPDATE Warehouse
     SET Warehouse.Reserved = po.Amount
     FROM
-        Products_Order po
+    Products_Order po
     WHERE Warehouse.ProductId = po.ProductId
-        AND po.OrderId = @OrderId
+    AND po.OrderId = @OrderId
 
 
     -- empty cart
@@ -176,8 +186,14 @@ BEGIN
 
     --generate random order number
     SELECT
-        FLOOR(RAND()*(99999999-10000000+1))+10000000 AS OrderNumber
-END
+    FLOOR(RAND()*(99999999-10000000+1))+10000000 AS OrderNumber
+        
+    COMMIT
+    END TRY
+
+        BEGIN CATCH
+        ROLLBACK
+        END CATCH
     GO
 
 /* Popularitetsrapport */
@@ -199,30 +215,36 @@ GO
 CREATE OR ALTER PROCEDURE ShipOrder
     (@OrderId int)
 AS
-BEGIN
+BEGIN TRY
+BEGIN TRANSACTION
     -- log stock transaction
     INSERT INTO StockTransactions
-        (OrderId, ProductId, StockChange, DateTimeOfTransaction, TransactionId)
-    SELECT
-        po.OrderId,
-        po.ProductId,
-        po.Amount * (-1),
-        GETDATE(),
-        1
-    FROM
-        Products_Order po
-    WHERE po.OrderId = @OrderId
+    (OrderId, ProductId, StockChange, DateTimeOfTransaction, TransactionId)
+SELECT
+    po.OrderId,
+    po.ProductId,
+    po.Amount * (-1),
+    GETDATE(),
+    1
+FROM
+    Products_Order po
+WHERE po.OrderId = @OrderId
 
     -- ta bort reservationen
     UPDATE Warehouse
     SET Warehouse.Reserved += StockTransactions.StockChange,
     Warehouse.InStock += StockTransactions.StockChange
     FROM
-        Warehouse INNER JOIN StockTransactions
-        ON Warehouse.ProductId = StockTransactions.ProductId
+    Warehouse INNER JOIN StockTransactions
+    ON Warehouse.ProductId = StockTransactions.ProductId
     WHERE Warehouse.ProductId = StockTransactions.ProductId
-        AND StockTransactions.OrderId = @OrderId
-END
+    AND StockTransactions.OrderId = @OrderId
+COMMIT
+END TRY
+
+BEGIN CATCH
+ROLLBACK
+END CATCH
 GO
 
 /* StockAdjustment */
@@ -232,17 +254,23 @@ CREATE OR ALTER PROCEDURE StockAdjustment
     @TransactionId int = NULL
 )
 AS
-BEGIN
+BEGIN TRY
+BEGIN TRANSACTION
     -- log stock transaction
     INSERT INTO StockTransactions
-        (ProductId, StockChange, DateTimeOfTransaction, TransactionId)
-    VALUES(@ProductId, @StockChange, GETDATE(), @TransactionId)
+    (ProductId, StockChange, DateTimeOfTransaction, TransactionId)
+VALUES(@ProductId, @StockChange, GETDATE(), @TransactionId)
 
     -- justera lagersaldo
     UPDATE Warehouse
     SET Warehouse.InStock += @StockChange
     WHERE Warehouse.ProductId = @ProductId
-END
+    COMMIT
+    END TRY
+
+BEGIN CATCH
+ROLLBACK
+END CATCH
 GO
 
 

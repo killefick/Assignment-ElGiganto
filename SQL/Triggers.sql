@@ -10,7 +10,6 @@ BEGIN
 END
 GO
 
-
 /* Popularity +10 */
 CREATE OR ALTER TRIGGER Popularity_10
 ON Products_Order
@@ -22,7 +21,6 @@ BEGIN
     WHERE Products.Id = inserted.ProductId
 END
 GO
-
 
 /* AdjustCartValues */
 CREATE OR ALTER TRIGGER AdjustCartValues
@@ -43,7 +41,6 @@ BEGIN
 END
 GO
 
-
 /* CalculateSumOrder */
 CREATE OR ALTER TRIGGER CalculateSumOrder
 ON Products_Order
@@ -61,7 +58,6 @@ GO
 DELETE FROM products_order
 GO
 
-
 /* CalculateStockBalance */
 CREATE OR ALTER TRIGGER CalculateStockBalance
 ON Warehouse
@@ -74,7 +70,6 @@ BEGIN
 	WHERE Warehouse.Id = inserted.Id
 END
 GO
-
 
 /* StandardStockAdjustment */
 CREATE OR ALTER TRIGGER StandardStockAdjustment
@@ -119,10 +114,3 @@ BEGIN
         AND w.Available > 0
 END
 GO
-
-SELECT *
-FROM Warehouse
-
-update Warehouse set Reserved = 100 where id = 5
-SELECT *
-FROM Products
