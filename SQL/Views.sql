@@ -76,14 +76,6 @@ AS
 GO
 
 /* Kategorirapport */
--- (en rad per kategori)
---  Sålt antal innevarande månad
---  Sålt antal föregående månad
---  Sålt antal senaste 365 dagarna
---  Returnerat antal innevarande månad
---  Returnerat antal föregående månad
---  Returnerat antal senaste 365 dagar
-
 
 CREATE OR ALTER VIEW Sold_This_Month
 AS

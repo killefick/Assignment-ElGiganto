@@ -43,9 +43,10 @@ CREATE TABLE Products
     Price int NOT NULL,
     IsInStock bit NOT NULL DEFAULT 1,
     Popularity int NOT NULL DEFAULT 0,
-    /* ska bli foreign key! */
     CategoryId int REFERENCES Categories(Id)
 )
+CREATE NONCLUSTERED INDEX IX_Products_CategoryId
+      ON Products (CategoryId ASC)
 
 INSERT INTO Products
     (Name, ProductDetails, Price, CategoryId)
@@ -119,7 +120,10 @@ CREATE TABLE Warehouse
     InStock int NOT NULL DEFAULT 0,
     Reserved int NOT NULL DEFAULT 0,
     Available int
+
 )
+CREATE NONCLUSTERED INDEX IX_Warehouse_ProductId
+      ON Warehouse (ProductId ASC)
 
 INSERT INTO Warehouse
     (ProductId, InStock, Reserved, Available)
@@ -195,10 +199,10 @@ CREATE TABLE Products_Cart
     Amount int NOT NULL,
     Sum int
 )
--- creates index
-CREATE INDEX IX_CartId_ProductId 
-      ON Products_Cart (CartId, ProductId ASC)
-
+CREATE NONCLUSTERED INDEX IX_Products_Cart_CartId
+      ON Products_Cart (CartId ASC)
+CREATE NONCLUSTERED INDEX IX_Products_Cart_ProductId
+      ON Products_Cart (ProductId ASC)
 
 
 /* Carts */
@@ -211,6 +215,8 @@ CREATE TABLE Carts
     CustomerId int REFERENCES Customers(Id),
     DateTimeCreated datetime DEFAULT GETDATE()
 )
+CREATE NONCLUSTERED INDEX IX_Carts_CustomerId
+      ON Carts (CustomerId ASC)
 
 /* Orders */
 DROP TABLE Orders
@@ -226,6 +232,8 @@ CREATE TABLE Orders
     CustomerCity varchar(50),
     DateTimeCreated datetime DEFAULT GETDATE()
 )
+CREATE NONCLUSTERED INDEX IX_Orders_CustomerId
+      ON Orders (CustomerId ASC)
 
 /* Products_Order */
 DROP TABLE Products_Order
@@ -240,11 +248,15 @@ CREATE TABLE Products_Order
     Sum int,
     AmountReturned int NOT NULL DEFAULT 0,
 )
+CREATE NONCLUSTERED INDEX IX_Products_Order_OrderId
+      ON Products_Order (OrderId ASC)
+CREATE NONCLUSTERED INDEX IX_Products_Order_ProductId
+      ON Products_Order (ProductId ASC)
 
 /* Customers */
 DROP TABLE Customers
 GO
- 
+
 CREATE TABLE Customers
 (
     Id int PRIMARY KEY IDENTITY(1,1),
@@ -282,6 +294,10 @@ CREATE TABLE StockTransactions
     DateTimeOfTransaction datetime,
     TransactionId int DEFAULT 2 REFERENCES Transactions(Id)
 )
+CREATE NONCLUSTERED INDEX IX_StockTransactions_OrderId
+      ON StockTransactions (OrderId ASC)
+CREATE NONCLUSTERED INDEX IX_StockTransactions_ProductId
+      ON StockTransactions (ProductId ASC)
 
 /* Transactions */
 DROP TABLE Transactions

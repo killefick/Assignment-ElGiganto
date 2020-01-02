@@ -1,6 +1,6 @@
 /* GetProductDetails & Popularity +1 */
 CREATE OR ALTER PROCEDURE GetProductDetails
-    (@ProcuctId int)
+    (@ProductId int)
 AS
 BEGIN TRY
 BEGIN TRANSACTION
@@ -14,10 +14,10 @@ FROM
     Products p
     INNER JOIN Categories c
     ON p.CategoryId = c.Id
-WHERE p.Id = @ProcuctId
+WHERE p.Id = @ProductId
 UPDATE Products 
 	SET Products.Popularity +=1
-	WHERE Products.Id = @ProcuctId
+	WHERE Products.Id = @ProductId
 COMMIT
 END TRY
 BEGIN CATCH
@@ -150,7 +150,6 @@ AS
 
 BEGIN TRY
 BEGIN TRANSACTION
-
     -- create order and insert customer id
     DECLARE @OrderId int
 
