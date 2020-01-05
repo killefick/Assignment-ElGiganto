@@ -19,12 +19,12 @@ namespace ElGiganto
             // default user choice
             int choice = 0;
             int cartID = 0;
-            string query = "";
             Random myRandomNumber = new Random();
             int customerNumber = myRandomNumber.Next(100000, 1000000);
             myDB.CreateCustomer(customerNumber);
-            cartID = myProduct.CreateCart(myProductListFromDB, myDB, customerNumber);
-
+            string query = $"DECLARE @CartIdOut int; EXEC @CartIdOut = CreateCart {customerNumber}; SELECT @CartIdOut AS CartId";
+            // cartID = myProduct.CreateCart(myProductListFromDB, myDB, customerNumber);
+            cartID = myDB.QueryDB_ReturnInt(myDB, query);
 
             while (true)
             {

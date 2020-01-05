@@ -41,16 +41,16 @@ namespace ElGiganto
             return myProductList;
         }
 
-        public int CreateCart(List<Product> myProductList, DB myDB, int customerNumber)
-        {
-            int cartIdOut = 0;
-            foreach (var product in myDB.CreateCartOnDB(customerNumber))
-            {
-                myProductList.Add(product);
-            }
-            cartIdOut = myProductList[0].CartId;
-            return cartIdOut;
-        }
+        // public int CreateCart(List<Product> myProductList, DB myDB, int customerNumber)
+        // {
+        //     int cartIdOut = 0;
+        //     foreach (var product in myDB.CreateCartOnDB(customerNumber))
+        //     {
+        //         myProductList.Add(product);
+        //     }
+        //     cartIdOut = myProductList[0].CartId;
+        //     return cartIdOut;
+        // }
 
         public int CheckOutCart(List<Product> myProductList, DB myDB, int customerNumber, int cartIdOut)
         {
