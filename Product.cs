@@ -22,20 +22,19 @@ namespace ElGiganto
 
         public bool IsInStock { get; set; }
 
-        public List<Product> QueryReturnList(List<Product> myProductList, DB myDB, string query)
+        public List<Product> QueryDB_ReturnList(List<Product> myProductList, DB myDB, string query)
         {
-            foreach (var product in myDB.QueryDatabaseReturnIEnumerable(query))
+            foreach (var product in myDB.QueryDB_ReturnIEnumerable(query))
             {
                 myProductList.Add(product);
             }
             return myProductList;
         }
 
-
-        public List<Product> QueryReturnList(List<Product> myProductList, DB myDB,string query, int input)
+        public List<Product> QueryDB_ReturnList(List<Product> myProductList, DB myDB,string query, int input)
         {
             
-            foreach (var product in myDB.QueryDatabaseReturnIEnumerable(query, input))
+            foreach (var product in myDB.QueryDB_ReturnIEnumerable(query, input))
             {
                 myProductList.Add(product);
             }

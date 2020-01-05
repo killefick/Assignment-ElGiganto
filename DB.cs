@@ -13,7 +13,7 @@ namespace ElGiganto
             this.connectionString = "Server=40.85.84.155;Database=ELGIGANTO13;User=Student13;Password=YH-student@2019;";
         }
 
-        public IEnumerable<Product> QueryDatabaseReturnIEnumerable(string query)
+        public IEnumerable<Product> QueryDB_ReturnIEnumerable(string query)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace ElGiganto
             }
         }
 
-        public IEnumerable<Product> QueryDatabaseReturnIEnumerable(string query, int input)
+        public IEnumerable<Product> QueryDB_ReturnIEnumerable(string query, int input)
         {
             try
             {
@@ -43,7 +43,20 @@ namespace ElGiganto
             }
         }
 
-
+        // public IEnumerable<Product> CreateCartOnDB(int customerNumber)
+        // {
+        //     try
+        //     {
+        //         using (SqlConnection connection = new SqlConnection(connectionString))
+        //         {
+        //             return connection.Query<Product>($"DECLARE @CartIdOut int; EXEC @CartIdOut = CreateCart {customerNumber}; SELECT @CartIdOut AS CartId");
+        //         }
+        //     }
+        //     catch (System.Exception)
+        //     {
+        //         throw;
+        //     }
+        // }
         public dynamic CreateCustomer(int customerNumber)
         {
             try
@@ -51,23 +64,6 @@ namespace ElGiganto
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     return connection.Query<dynamic>($"EXEC CreateCustomer {customerNumber} ");
-                }
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-        }
-
-
-
-        public IEnumerable<Product> CreateCartOnDB(int customerNumber)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    return connection.Query<Product>($"DECLARE @CartIdOut int; EXEC @CartIdOut = CreateCart {customerNumber}; SELECT @CartIdOut AS CartId");
                 }
             }
             catch (System.Exception)

@@ -64,7 +64,7 @@ namespace ElGiganto
                     case Choice.GetAllProducts:
                         Console.Clear();
                         query = "SELECT * FROM GetAllProducts";
-                        myProductListFromDB = myProduct.QueryReturnList(myProductListFromDB, myDB, query);
+                        myProductListFromDB = myProduct.QueryDB_ReturnList(myProductListFromDB, myDB, query);
 
                         Console.WriteLine("Produktkategori\t          Produktnamn\t          Pris\t          Popularitet");
                         foreach (var product in myProductListFromDB)
@@ -77,7 +77,7 @@ namespace ElGiganto
                     case Choice.MostPopular:
                         Console.Clear();
                         query = "SELECT CategoryName, ProductName, Popularity, Ranking FROM MostPopular WHERE Ranking <= 5";
-                        myProductListFromDB = myProduct.QueryReturnList(myProductListFromDB, myDB, query);
+                        myProductListFromDB = myProduct.QueryDB_ReturnList(myProductListFromDB, myDB, query);
                         Console.WriteLine("Produktkategori\t Produktnamn\t Popularitet \t  Rangordning");
                         foreach (var product in myProductListFromDB)
                         {
@@ -106,7 +106,7 @@ namespace ElGiganto
                         }
                         query = $"EXEC ListProductsByCategory {input}";
 
-                        myProductListFromDB = myProduct.QueryReturnList(myProductListFromDB, myDB, query, input);
+                        myProductListFromDB = myProduct.QueryDB_ReturnList(myProductListFromDB, myDB, query, input);
 
                         Console.WriteLine("Antal produkter: " + myProductListFromDB.Count);
                         Console.WriteLine("Produktnamn\t Pris \t  Rangordning");
@@ -120,7 +120,7 @@ namespace ElGiganto
 
                     case Choice.InsertIntoCart:
                         query = "SELECT * FROM GetAllProducts";
-                        myProductListFromDB = myProduct.QueryReturnList(myProductListFromDB, myDB, query);
+                        myProductListFromDB = myProduct.QueryDB_ReturnList(myProductListFromDB, myDB, query);
                         while (true)
                         {
                             Product tempProduct = new Product();
