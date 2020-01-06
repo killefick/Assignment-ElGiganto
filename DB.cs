@@ -58,13 +58,13 @@ namespace ElGiganto
             }
         }
 
-        public dynamic CreateCustomer(int customerNumber)
+        public int QueryDB_ReturnInt(DB myDB, List<Product> myList, string query, int input1, int input2)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    return connection.Query<dynamic>($"EXEC CreateCustomer {customerNumber} ");
+                    return connection.QueryFirst<int>(query);
                 }
             }
             catch (System.Exception)
@@ -73,13 +73,13 @@ namespace ElGiganto
             }
         }
 
-        public IEnumerable<Product> CheckOutCartOnDB(int customerNumber, int cartIdOut)
+        public void QueryDB(DB myDB, string query)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    return connection.Query<Product>($"EXEC CheckoutCart {customerNumber}, {cartIdOut}");
+                    connection.Query(query);
                 }
             }
             catch (System.Exception)
@@ -87,22 +87,7 @@ namespace ElGiganto
                 throw;
             }
         }
-
-        public void InsertIntoCart(int cartIdOut, int productId, int amount)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Query($"EXEC InsertIntoCart {cartIdOut}, {productId}, {amount}");
-                }
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-        }
-
+        
         public void ShipOrder(int orderId)
         {
             try

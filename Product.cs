@@ -31,37 +31,14 @@ namespace ElGiganto
             return myProductList;
         }
 
-        public List<Product> QueryDB_ReturnList(List<Product> myProductList, DB myDB,string query, int input)
+        public List<Product> QueryDB_ReturnList(List<Product> myProductList, DB myDB, string query, int input)
         {
-            
+
             foreach (var product in myDB.QueryDB_ReturnIEnumerable(query, input))
             {
                 myProductList.Add(product);
             }
             return myProductList;
-        }
-
-        // public int CreateCart(List<Product> myProductList, DB myDB, int customerNumber)
-        // {
-        //     int cartIdOut = 0;
-        //     foreach (var product in myDB.CreateCartOnDB(customerNumber))
-        //     {
-        //         myProductList.Add(product);
-        //     }
-        //     cartIdOut = myProductList[0].CartId;
-        //     return cartIdOut;
-        // }
-
-        public int CheckOutCart(List<Product> myProductList, DB myDB, int customerNumber, int cartIdOut)
-        {
-            int OrderNumber = 0;
-
-            foreach (var product in myDB.CheckOutCartOnDB(customerNumber, cartIdOut))
-            {
-                myProductList.Add(product);
-            }
-            OrderNumber = myProductList[0].OrderNumber;
-            return OrderNumber;
         }
     }
 }
