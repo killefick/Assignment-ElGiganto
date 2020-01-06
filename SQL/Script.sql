@@ -158,7 +158,7 @@ FROM MostPopular
 WHERE Ranking <= 5
 
 /* Returrapport */
-SELECT TOP 5 * FROM TopReturnedProducts
+SELECT TOP 5 Name ProductName, AmountReturned, Ranking FROM TopReturnedProducts
 
 /* Kategorirapport */
 EXEC Kategorirapport

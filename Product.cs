@@ -19,6 +19,13 @@ namespace ElGiganto
         public int CartId { get; set; }
         public int Id { get; set; }
         public int Amount { get; set; }
+        public int AmountReturned { get; set; }
+        public int Sold_This_Month { get; set; }
+        public int Returned_This_Month { get; set; }
+        public int Sold_Last_Month { get; set; }
+        public int Returned_Last_Month { get; set; }
+        public int Sold_Last_365 { get; set; }
+        public int Returned_Last_365 { get; set; }
 
         public bool IsInStock { get; set; }
 

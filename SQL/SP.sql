@@ -355,69 +355,33 @@ BEGIN
 END
 GO
 
-/* Sold_Last_Month */
-CREATE OR ALTER PROCEDURE Sold_Last_Month
-AS
-DECLARE @startOfCurrentMonth datetime
-SET @startOfCurrentMonth = DATEADD(month, DATEDIFF(month, 0, CURRENT_TIMESTAMP), 0)
-(
-    SELECT
-    c.Name AS Category,
-    SUM(st.StockChange * -1) AS Sold_Last_Month
-FROM
-    Stocktransactions st
-    INNER JOIN Products p ON p.Id = st.ProductId
-    INNER JOIN Categories c ON c.Id = p.CategoryId
-/* https://stackoverflow.com/questions/1424999/get-the-records-OF-last-month-IN-sql-server */
-WHERE DateTimeOfTransaction >= DATEADD(month, -1, @startOfCurrentMonth)
-    AND DateTimeOfTransaction < @startOfCurrentMonth
-    AND st.transactionid = 1
-GROUP BY c.Name
-    )
-GO
-
-/* Returned_Last_Month */
-CREATE OR ALTER PROCEDURE Returned_Last_Month
-AS
-DECLARE @startOfCurrentMonth datetime
-SET @startOfCurrentMonth = DATEADD(month, DATEDIFF(month, 0, CURRENT_TIMESTAMP), 0)
-(
-    SELECT
-    c.Name AS Category,
-    SUM(st.AmountReturned) AS Returned_Last_Month
-FROM
-    Stocktransactions st
-    INNER JOIN Products p ON p.Id = st.ProductId
-    INNER JOIN Categories c ON c.Id = p.CategoryId
-/* https://stackoverflow.com/questions/1424999/get-the-records-OF-last-month-IN-sql-server */
-WHERE DateTimeOfTransaction >= DATEADD(month, -1, @startOfCurrentMonth)
-    AND DateTimeOfTransaction < @startOfCurrentMonth
-    AND st.transactionid = 3
-GROUP BY c.Name
-    )
-GO
-
 /* Kategorirapport */
 CREATE OR ALTER PROCEDURE Kategorirapport
 AS
 BEGIN
     SELECT
-        *
-    FROM
-        Sold_This_Month
-    EXEC Sold_Last_Month
+    Category CategoryName, Sold_This_Month
+    FROM Sold_This_Month
+    UNION ALL
+    SELECT CategoryName, Sold_Last_Month
+    FROM Sold_Last_Month()
+    UNION ALL
     SELECT
-        *
+    Category CategoryName, Sold_Last_365
     FROM
-        Sold_Last_365_Days
+    Sold_Last_365_Days
+    UNION ALL
     SELECT
-        *
+    Category CategoryName, Returned_This_Month
     FROM
-        Returned_This_Month
-    EXEC returned_Last_Month
+    Returned_This_Month
+    UNION ALL
+    SELECT CategoryName, Returned_Last_Month
+    FROM Returned_Last_Month()
+    UNION ALL
     SELECT
-        *
+    Category CategoryName, Returned_Last_365
     FROM
-        Returned_Last_365_Days
+    Returned_Last_365_Days
 END
 GO

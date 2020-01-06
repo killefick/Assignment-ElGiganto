@@ -6,29 +6,32 @@ namespace ElGiganto
     public enum Choice
     {
         Quit, GetAllProducts, MostPopular, ListProductsByCategory,
-        InsertIntoCart, ShowCart, EmptyCart, PlaceOrder, ShipOrder
+        InsertIntoCart, ShowCart, EmptyCart, PlaceOrder, ShipOrder,
+        PopularityReport, ReturnsReport, CategoryReport
     };
 
     class Menu
     {
-        List<Product> myProductListFromDB = new List<Product>();
+        List<Product> myProductList = new List<Product>();
         List<Product> myCart = new List<Product>();
 
         public void StartMenu(Product myProduct, DB myDB)
         {
-            int choice = 0;
-            int cartId = 0;
             Random myRandomNumber = new Random();
             int customerNumber = myRandomNumber.Next(100000, 1000000);
+
+            //create customer 
             string query = $"EXEC CreateCustomer {customerNumber}";
             myDB.QueryDB(myDB, query);
+
+            //create cart
             query = $"DECLARE @CartIdOut int; EXEC @CartIdOut = CreateCart {customerNumber}; SELECT @CartIdOut AS CartId";
-            cartId = myDB.QueryDB_ReturnInt(myDB, query);
+            int cartId = myDB.QueryDB_ReturnInt(myDB, query);
 
             while (true)
             {
                 Console.Clear();
-                myProductListFromDB.Clear();
+                myProductList.Clear();
 
                 System.Console.WriteLine($"Kundnummer: {customerNumber}");
                 System.Console.WriteLine($"CartId: {cartId}");
@@ -41,14 +44,18 @@ namespace ElGiganto
                 + Convert.ToInt32(Choice.EmptyCart) + ": Töm varukorgen\n"
                 + Convert.ToInt32(Choice.PlaceOrder) + ": Lägg order\n"
                 + Convert.ToInt32(Choice.ShipOrder) + ": Skicka order\n"
+                + Convert.ToInt32(Choice.PopularityReport) + ": Popularitetsrapport\n"
+                + Convert.ToInt32(Choice.ReturnsReport) + ": Returrapport\n"
+                + Convert.ToInt32(Choice.CategoryReport) + ": Kategorirapport\n"
 
                 + Convert.ToInt32(Choice.Quit) + ": Avsluta\n");
 
                 Console.Write("Gör ett val: ");
 
+                int userChoice = 0;
                 try
                 {
-                    choice = TryToConvertToInt(Console.ReadLine());
+                    userChoice = TryToConvertToInt(Console.ReadLine());
                 }
                 catch
                 {
@@ -56,19 +63,28 @@ namespace ElGiganto
                     continue;
                 }
 
-                Choice enumIndex = SetEnum(choice);
+                Choice enumIndex = SetEnum(userChoice);
 
                 switch (enumIndex)
                 {
                     case Choice.GetAllProducts:
                         Console.Clear();
                         query = "SELECT * FROM GetAllProducts";
-                        myProductListFromDB = myProduct.QueryDB_ReturnList(myProductListFromDB, myDB, query);
+                        this.myProductList = myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
 
-                        Console.WriteLine("Produktkategori\t          Produktnamn\t          Pris\t          Popularitet");
-                        foreach (var product in myProductListFromDB)
+                        Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-20}",
+                        "Kategori",
+                        "Produkt",
+                        "Pris",
+                        "Popularitet");
+
+                        foreach (var product in this.myProductList)
                         {
-                            Console.WriteLine($"{product.CategoryName}\t          {product.ProductName}\t          {product.Price}\t          {product.Popularity}");
+                            Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-20}",
+                            product.CategoryName,
+                            product.ProductName,
+                            product.Price,
+                            product.Popularity);
                         }
                         PressAnyKey();
                         break;
@@ -76,11 +92,21 @@ namespace ElGiganto
                     case Choice.MostPopular:
                         Console.Clear();
                         query = "SELECT CategoryName, ProductName, Popularity, Ranking FROM MostPopular WHERE Ranking <= 5";
-                        myProductListFromDB = myProduct.QueryDB_ReturnList(myProductListFromDB, myDB, query);
-                        Console.WriteLine("Produktkategori\t Produktnamn\t Popularitet \t  Rangordning");
-                        foreach (var product in myProductListFromDB)
+                        this.myProductList = myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
+
+                        Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-20}",
+                        "Kategori",
+                        "Produkt",
+                        "Popularitet",
+                        "Rangordning");
+
+                        foreach (var product in this.myProductList)
                         {
-                            Console.WriteLine($"{product.CategoryName}\t {product.ProductName}\t {product.Popularity}\t {product.Ranking}");
+                            Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-20}",
+                            product.CategoryName,
+                            product.ProductName,
+                            product.Popularity,
+                            product.Ranking);
                         }
                         PressAnyKey();
                         break;
@@ -105,21 +131,28 @@ namespace ElGiganto
                         }
                         query = $"EXEC ListProductsByCategory {input}";
 
-                        myProductListFromDB = myProduct.QueryDB_ReturnList(myProductListFromDB, myDB, query, input);
+                        this.myProductList = myProduct.QueryDB_ReturnList(this.myProductList, myDB, query, input);
 
-                        Console.WriteLine("Antal produkter: " + myProductListFromDB.Count);
-                        Console.WriteLine("Produktnamn\t Pris \t  Rangordning");
-                        foreach (var product in myProductListFromDB)
+                        Console.WriteLine("{0,-20}{1,-20}{2,-20}",
+                         "Produktnamn",
+                         "Pris",
+                         "Popularitet");
+
+                        foreach (var product in this.myProductList)
                         {
-                            Console.WriteLine($"{product.ProductName}\t {product.Price}\t {product.Popularity}");
+                            Console.WriteLine("{0,-20}{1,-20}{2,-20}",
+                            product.CategoryName,
+                            product.ProductName,
+                            product.Popularity);
                         }
+                        Console.WriteLine("Antal produkter: " + this.myProductList.Count);
                         PressAnyKey();
                         break;
 
 
                     case Choice.InsertIntoCart:
                         query = "SELECT * FROM GetAllProducts";
-                        myProductListFromDB = myProduct.QueryDB_ReturnList(myProductListFromDB, myDB, query);
+                        this.myProductList = myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
                         while (true)
                         {
                             Product tempProduct = new Product();
@@ -127,7 +160,7 @@ namespace ElGiganto
                             int productId = 0;
                             int amount = 0;
                             Console.WriteLine("Id \t\t Produktkategori   \t Produktnamn \t\t\t      Pris \t\t  Popularitet");
-                            foreach (var product in myProductListFromDB)
+                            foreach (var product in this.myProductList)
                             {
                                 Console.WriteLine($"{product.Id} \t\t {product.CategoryName}   \t\t {product.ProductName} \t\t\t      {product.Price} \t\t {product.Popularity}");
                             }
@@ -143,7 +176,7 @@ namespace ElGiganto
                                 break;
                             }
 
-                            if (myProductListFromDB.Count >= productId)
+                            if (this.myProductList.Count >= productId)
                             {
                                 System.Console.Write("Ange antal eller tryck valfri tangent för att avbryta: ");
                             }
@@ -193,7 +226,7 @@ namespace ElGiganto
                                 myDB.QueryDB(myDB, query);
                             }
                             query = $"EXEC CheckoutCart {customerNumber}, {cartId}";
-                            int orderNumber = myDB.QueryDB_ReturnInt(myDB, myProductListFromDB, query, customerNumber, cartId);
+                            int orderNumber = myDB.QueryDB_ReturnInt(myDB, this.myProductList, query, customerNumber, cartId);
                             System.Console.WriteLine("Tack för din order! Ditt ordernummer är " + orderNumber + ".");
                             myCart.Clear();
                         }
@@ -202,15 +235,71 @@ namespace ElGiganto
                         {
                             System.Console.WriteLine("Varukorgen är tom");
                         }
-
-                        Console.ReadLine();
+                        PressAnyKey();
                         break;
 
                     case Choice.ShipOrder:
                         query = $"EXEC Shiporder {cartId}";
                         myDB.QueryDB(myDB, query);
                         Console.WriteLine("Ordern är skickad.");
-                        Console.ReadLine();
+                        PressAnyKey();
+                        break;
+
+                    case Choice.PopularityReport:
+                        query = "SELECT CategoryName, ProductName, Popularity, Ranking FROM MostPopular WHERE Ranking <= 5";
+                        this.myProductList = myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
+
+                        Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-20}",
+                        "Kategori",
+                        "Produkt",
+                        "Popularitet",
+                        "Rangordning");
+
+                        foreach (var product in this.myProductList)
+                        {
+                            Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-20}",
+                            product.CategoryName,
+                            product.ProductName,
+                            product.Popularity,
+                            product.Ranking);
+                        }
+                        PressAnyKey();
+                        break;
+
+                    case Choice.ReturnsReport:
+                        query = "SELECT TOP 5 Name ProductName, AmountReturned, Ranking FROM TopReturnedProducts";
+                        this.myProductList = myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
+
+                        Console.WriteLine("{0,-20}{1,-20}{2,-20}",
+                        "Produkt",
+                        "Antal returnerad",
+                        "Rangordning");
+
+                        foreach (var product in this.myProductList)
+                        {
+                            Console.WriteLine("{0,-20}{1,-20}{2,-20}",
+                            product.ProductName,
+                            product.AmountReturned,
+                            product.Ranking);
+                        }
+                        PressAnyKey();
+                        break;
+                    
+                    case Choice.CategoryReport:
+                        query = "EXEC Kategorirapport";
+                        myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
+
+                        Console.WriteLine("{0,-10}{1,-15}",
+                        "Kategori",
+                        "Såld denna");
+
+                        foreach (var product in this.myProductList)
+                        {
+                            Console.WriteLine("{0,-10}{1,-15}",
+                            product.CategoryName,
+                            product.Sold_This_Month);
+                        }
+                        PressAnyKey();
                         break;
 
                     case Choice.Quit:

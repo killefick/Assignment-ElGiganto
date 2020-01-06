@@ -130,7 +130,7 @@ AS
     (
     SELECT
         c.Name AS Category,
-        SUM(st.AmountReturned) AS Returned_Last_365_Days
+        SUM(st.AmountReturned) AS Returned_Last_365
     FROM
         Stocktransactions st
         INNER JOIN Products p ON p.Id = st.ProductId

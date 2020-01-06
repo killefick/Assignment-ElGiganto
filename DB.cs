@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using Dapper;
 
 namespace ElGiganto
@@ -87,5 +88,21 @@ namespace ElGiganto
                 throw;
             }
         }
+
+        // public List<Product> test(List<Product> myList, DB myDB, string query)
+        // {
+        //     using (SqlConnection connection = new SqlConnection(connectionString))
+        //     {
+        //         connection.Open();
+
+        //         using (var multi = connection.QueryMultiple(query))
+        //         {
+        //             var product = multi.Read<Product>().First();
+        //             var productList = multi.Read<Product>().ToList();
+        //             return productList;
+        //         }
+        //     }
+        // }
+
     }
 }
