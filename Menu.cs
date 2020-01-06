@@ -207,7 +207,8 @@ namespace ElGiganto
                         break;
 
                     case Choice.ShipOrder:
-                        myDB.ShipOrder(cartId);
+                        query = $"EXEC Shiporder {cartId}";
+                        myDB.QueryDB(myDB, query);
                         Console.WriteLine("Ordern är skickad.");
                         Console.ReadLine();
                         break;

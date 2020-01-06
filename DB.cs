@@ -87,20 +87,5 @@ namespace ElGiganto
                 throw;
             }
         }
-        
-        public void ShipOrder(int orderId)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Query($"EXEC Shiporder {orderId}");
-                }
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-        }
     }
 }
