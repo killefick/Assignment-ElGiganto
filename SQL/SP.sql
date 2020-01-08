@@ -362,23 +362,18 @@ BEGIN
     SELECT
     Category CategoryName, Sold_This_Month
     FROM Sold_This_Month
-    UNION ALL
     SELECT CategoryName, Sold_Last_Month
     FROM Sold_Last_Month()
-    UNION ALL
     SELECT
     Category CategoryName, Sold_Last_365
     FROM
     Sold_Last_365_Days
-    UNION ALL
     SELECT
     Category CategoryName, Returned_This_Month
     FROM
     Returned_This_Month
-    UNION ALL
     SELECT CategoryName, Returned_Last_Month
     FROM Returned_Last_Month()
-    UNION ALL
     SELECT
     Category CategoryName, Returned_Last_365
     FROM

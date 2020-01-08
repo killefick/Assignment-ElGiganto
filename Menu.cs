@@ -284,21 +284,51 @@ namespace ElGiganto
                         }
                         PressAnyKey();
                         break;
-                    
+
                     case Choice.CategoryReport:
-                        query = "EXEC Kategorirapport";
+                        Console.Clear();
+                        query = "SELECT Category CategoryName, Sold_This_Month FROM Sold_This_Month";
                         myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
 
-                        Console.WriteLine("{0,-10}{1,-15}",
+                        Console.WriteLine("{0,-15}{1,-15}",
                         "Kategori",
-                        "Såld denna");
-
+                        "Såld denna månad");
                         foreach (var product in this.myProductList)
                         {
-                            Console.WriteLine("{0,-10}{1,-15}",
+                            Console.WriteLine("{0,-15}{1,-15}",
                             product.CategoryName,
                             product.Sold_This_Month);
                         }
+                            Console.WriteLine();
+
+                        query = "SELECT CategoryName, Sold_Last_Month FROM Sold_Last_Month()";
+                        myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
+
+                        Console.WriteLine("{0,-15}{1,-15}",
+                        "Kategori",
+                        "Såld förra månad");
+                        foreach (var product in this.myProductList)
+                        {
+                            Console.WriteLine("{0,-15}{1,-15}",
+                            product.CategoryName,
+                            product.Sold_Last_Month);
+                        }
+                            Console.WriteLine();
+                    
+                        query = "SELECT Category CategoryName, Sold_Last_365 FROM Sold_Last_365_Days";
+                        myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
+
+                        Console.WriteLine("{0,-15}{1,-15}",
+                        "Kategori",
+                        "Såld senaste 365 dagar");
+                        foreach (var product in this.myProductList)
+                        {
+                            Console.WriteLine("{0,-15}{1,-15}",
+                            product.CategoryName,
+                            product.Sold_Last_365);
+                        }
+                            Console.WriteLine();
+
                         PressAnyKey();
                         break;
 
