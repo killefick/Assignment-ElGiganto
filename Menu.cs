@@ -287,6 +287,7 @@ namespace ElGiganto
 
                     case Choice.CategoryReport:
                         Console.Clear();
+                        myProductList.Clear();
                         query = "SELECT Category CategoryName, Sold_This_Month FROM Sold_This_Month";
                         myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
 
@@ -301,6 +302,7 @@ namespace ElGiganto
                         }
                             Console.WriteLine();
 
+                        myProductList.Clear();
                         query = "SELECT CategoryName, Sold_Last_Month FROM Sold_Last_Month()";
                         myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
 
@@ -315,6 +317,7 @@ namespace ElGiganto
                         }
                             Console.WriteLine();
                     
+                        myProductList.Clear();
                         query = "SELECT Category CategoryName, Sold_Last_365 FROM Sold_Last_365_Days";
                         myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
 
@@ -328,7 +331,51 @@ namespace ElGiganto
                             product.Sold_Last_365);
                         }
                             Console.WriteLine();
+                      
+                        myProductList.Clear();
+                        query = "SELECT Category CategoryName, Returned_This_Month FROM Returned_This_Month";
+                        myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
 
+                        Console.WriteLine("{0,-15}{1,-15}",
+                        "Kategori",
+                        "Returnerad denna månad");
+                        foreach (var product in this.myProductList)
+                        {
+                            Console.WriteLine("{0,-15}{1,-15}",
+                            product.CategoryName,
+                            product.Returned_This_Month);
+                        }
+                            Console.WriteLine();
+                     
+                        myProductList.Clear();
+                        query = "SELECT CategoryName, Returned_Last_Month FROM Returned_Last_Month()";
+                        myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
+
+                        Console.WriteLine("{0,-15}{1,-15}",
+                        "Kategori",
+                        "Returnerad förra månad");
+                        foreach (var product in this.myProductList)
+                        {
+                            Console.WriteLine("{0,-15}{1,-15}",
+                            product.CategoryName,
+                            product.Returned_This_Month);
+                        }
+                            Console.WriteLine();
+
+                        myProductList.Clear();
+                        query = "SELECT Category CategoryName, Returned_Last_365 FROM Returned_Last_365_Days";
+                        myProduct.QueryDB_ReturnList(this.myProductList, myDB, query);
+
+                        Console.WriteLine("{0,-15}{1,-15}",
+                        "Kategori",
+                        "Returnerad senaste 365 dagar");
+                        foreach (var product in this.myProductList)
+                        {
+                            Console.WriteLine("{0,-15}{1,-15}",
+                            product.CategoryName,
+                            product.Returned_This_Month);
+                        }
+                            Console.WriteLine();
                         PressAnyKey();
                         break;
 
