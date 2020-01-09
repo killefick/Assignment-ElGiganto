@@ -44,6 +44,21 @@ namespace ElGiganto
             }
         }
 
+        public IEnumerable<Product> QueryDB_ReturnIEnumerable(string query, int input1, int input2)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    return connection.Query<Product>(query);
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
         public int QueryDB_ReturnInt(DB myDB, string query)
         {
             try
@@ -88,21 +103,5 @@ namespace ElGiganto
                 throw;
             }
         }
-
-        // public List<Product> test(List<Product> myList, DB myDB, string query)
-        // {
-        //     using (SqlConnection connection = new SqlConnection(connectionString))
-        //     {
-        //         connection.Open();
-
-        //         using (var multi = connection.QueryMultiple(query))
-        //         {
-        //             var product = multi.Read<Product>().First();
-        //             var productList = multi.Read<Product>().ToList();
-        //             return productList;
-        //         }
-        //     }
-        // }
-
     }
 }

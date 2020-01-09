@@ -199,7 +199,8 @@ WHERE Products_Cart.CartId = @CartId
 
     --generate random order number
     SELECT
-    FLOOR(RAND()*(99999999-10000000+1))+10000000 AS OrderNumber
+    FLOOR(RAND()*(99999999-10000000+1))+10000000 AS OrderNumber, 
+    @OrderId AS OrderId
         
     COMMIT
     END TRY

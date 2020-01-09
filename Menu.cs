@@ -27,9 +27,11 @@ namespace ElGiganto
             //create cart
             query = $"DECLARE @CartIdOut int; EXEC @CartIdOut = CreateCart {customerNumber}; SELECT @CartIdOut AS CartId";
             int cartId = myDB.QueryDB_ReturnInt(myDB, query);
+            int orderId = 0;
 
             while (true)
             {
+
                 Console.Clear();
                 myProductList.Clear();
 
@@ -196,11 +198,7 @@ namespace ElGiganto
                             Console.Clear();
                             int productId = 0;
                             int amount = 0;
-                            // Console.WriteLine("Id \t\t Produktkategori   \t Produktnamn \t\t\t      Pris \t\t  Popularitet");
-                            // foreach (var product in this.myProductList)
-                            // {
-                            //     Console.WriteLine($"{product.Id} \t\t {product.CategoryName}   \t\t {product.ProductName} \t\t\t      {product.Price} \t\t {product.Popularity}");
-                            // }
+
                             Console.WriteLine("{0,-5}{1,-20}{2,-20}{3,-20}{4,-20}",
                                                    "Id",
                                                    "Kategori",
@@ -275,13 +273,14 @@ namespace ElGiganto
                         {
                             foreach (var product in myCart)
                             {
-                                // myDB.InsertIntoCart(cartID, product.Id, product.Amount);
                                 query = $"EXEC InsertIntoCart {cartId}, {product.Id}, {product.Amount}";
                                 myDB.QueryDB(myDB, query);
                             }
                             query = $"EXEC CheckoutCart {customerNumber}, {cartId}";
-                            int orderNumber = myDB.QueryDB_ReturnInt(myDB, this.myProductList, query, customerNumber, cartId);
-                            Console.WriteLine("Tack för din order! Ditt ordernummer är " + orderNumber + ".");
+                            myProductList = myProduct.QueryDB_ReturnList(this.myProductList, myDB, query, customerNumber, cartId);
+
+                            Console.WriteLine("Tack för din order! Ditt ordernummer är " + myProductList[0].OrderNumber + ".");
+                            orderId = myProductList[0].OrderId;
                             myCart.Clear();
                         }
 
@@ -293,7 +292,7 @@ namespace ElGiganto
                         break;
 
                     case Choice.ShipOrder:
-                        query = $"EXEC Shiporder {cartId}";
+                        query = $"EXEC Shiporder {orderId}";
                         myDB.QueryDB(myDB, query);
                         Console.WriteLine("Ordern är skickad.");
                         PressAnyKey();
@@ -412,7 +411,7 @@ namespace ElGiganto
                         {
                             Console.WriteLine("{0,-15}{1,-15}",
                             product.CategoryName,
-                            product.Returned_This_Month);
+                            product.Returned_Last_Month);
                         }
                         Console.WriteLine();
 
@@ -427,7 +426,7 @@ namespace ElGiganto
                         {
                             Console.WriteLine("{0,-15}{1,-15}",
                             product.CategoryName,
-                            product.Returned_This_Month);
+                            product.Returned_Last_365);
                         }
                         Console.WriteLine();
                         PressAnyKey();

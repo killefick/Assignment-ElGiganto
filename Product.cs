@@ -10,6 +10,7 @@ namespace ElGiganto
         public string ProductDetails { get; set; }
 
         public int OrderNumber { get; set; }
+        public int OrderId { get; set; }
         public int CustomerId { get; set; }
         public int CustomerNumber { get; set; }
         public int CategoryId { get; set; }
@@ -42,6 +43,16 @@ namespace ElGiganto
         {
 
             foreach (var product in myDB.QueryDB_ReturnIEnumerable(query, input))
+            {
+                myProductList.Add(product);
+            }
+            return myProductList;
+        }
+
+        public List<Product> QueryDB_ReturnList(List<Product> myProductList, DB myDB, string query, int input1, int input2)
+        {
+
+            foreach (var product in myDB.QueryDB_ReturnIEnumerable(query, input1, input2))
             {
                 myProductList.Add(product);
             }

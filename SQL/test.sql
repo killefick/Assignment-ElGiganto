@@ -77,3 +77,4 @@ go
 -- END;
 
 select * from stocktransactions
+SELECT CategoryName, Returned_Last_Month FROM Returned_Last_Month()
