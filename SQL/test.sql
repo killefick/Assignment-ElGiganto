@@ -75,3 +75,5 @@ go
 --         Returned_Last_365_Days
 --     RETURN;
 -- END;
+
+select * from stocktransactions

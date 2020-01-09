@@ -71,8 +71,6 @@ BEGIN
 END
 GO
 
-select * from warehouse go
-
 /* UpdateStockBalance */
 CREATE OR ALTER TRIGGER UpdateStockBalance
 ON Products_Cart

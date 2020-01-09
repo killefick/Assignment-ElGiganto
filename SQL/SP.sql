@@ -5,8 +5,8 @@ AS
 BEGIN TRY
 BEGIN TRANSACTION
 SELECT
-    c.Name Category,
-    p.Name Product,
+    c.Name CategoryName,
+    p.Name ProductName,
     Price,
     IsInStock,
     Popularity
