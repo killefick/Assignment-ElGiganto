@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION Sold_Last_Month()
+CREATE OR ALTER FUNCTION dbo.Sold_Last_Month()
 RETURNS @Result TABLE
 (CategoryName varchar(20),
     Sold_Last_Month int)
@@ -35,7 +35,7 @@ END
     GO
 
 /* Returned_Last_Month */
-CREATE OR ALTER FUNCTION Returned_Last_Month()
+CREATE OR ALTER FUNCTION dbo.Returned_Last_Month()
 RETURNS @Result TABLE
 (CategoryName varchar(20),
     Returned_Last_Month int)
