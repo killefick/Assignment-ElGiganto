@@ -216,7 +216,8 @@ namespace ElGiganto
                                 product.Popularity);
                             }
                             Console.WriteLine();
-                            Console.Write("Vilken produkt ska läggas till varukorgen (ange Id) eller tryck valfri tangent för att avbryta: ");
+                            Console.Write("Vilken produkt ska läggas till varukorgen "
+                            +"(ange Id) eller tryck valfri tangent för att avbryta: ");
                             userinput = Console.ReadLine().ToLower();
 
                             try
